@@ -78,8 +78,8 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
  <div id="set" class="glass">
   <h4>玻璃材質（所有鏡片共用）</h4>
   <div class="gs"><label><span>折射率 IOR</span><b id="v_ior"></b></label><input type="range" id="ior" min="1.05" max="2.3" step="0.01"></div>
-  <div class="gs"><label><span>色散（僅 3D 外觀）</span><b id="v_disp"></b></label><input type="range" id="disp" min="0" max="0.12" step="0.002"></div>
-  <div class="gs"><label><span>Fresnel 反射強度</span><b id="v_fres"></b></label><input type="range" id="fres" min="0" max="10" step="0.1"></div>
+  <div class="gs"><label><span>色散</span><b id="v_disp"></b></label><input type="range" id="disp" min="0" max="0.12" step="0.002"></div>
+  <div class="gs"><label><span>菲涅耳</span><b id="v_fres"></b></label><input type="range" id="fres" min="0" max="10" step="0.1"></div>
   <h4>HDRI 環境（僅用於反射）</h4>
   <div class="presets" id="hd"><button class="btn act" data-h="hall">科幻艙</button><button class="btn" data-h="studio">攝影棚</button><button class="btn" data-h="sunset">日落</button><button class="btn" data-h="sky">晴空</button><button class="btn" id="hup">＋我的圖片</button></div><input type="file" id="hfile" accept="image/*" style="display:none">
   <div class="gs"><label><span>HDRI 亮度</span><b id="v_exp"></b></label><input type="range" id="exp" min="0.3" max="3" step="0.05"></div>
