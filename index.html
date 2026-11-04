@@ -246,6 +246,16 @@ input[type=range]{touch-action:pan-y}
 #smenu.on{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition:opacity .15s,transform .2s cubic-bezier(.2,.9,.25,1.1),visibility 0s}
 #smenu button{display:flex;align-items:center;gap:9px;border:0;background:transparent;color:var(--tx);padding:11px 16px;border-radius:10px;font:500 14px Inter,system-ui,sans-serif;cursor:pointer;white-space:nowrap}
 #smenu button:active,#smenu button:hover{background:color-mix(in srgb,var(--tx) 10%,transparent)}#smenu button.danger{color:#f43f5e}
+
+/* 視角方塊 */
+#tbV{position:absolute;inset:0;pointer-events:none}#app.play #tbV{display:none}
+.vb{position:absolute;pointer-events:auto;touch-action:none;cursor:move;box-sizing:border-box;user-select:none;-webkit-user-select:none}
+.vb .hd{display:none}.vb.sel .hd{display:block}.vb.sel{outline:1.5px solid var(--acc)}
+.vb.ev{cursor:grab;outline:2px dashed var(--acc2)}.vb.ev .hd{display:none}
+#dview{flex-direction:column;gap:10px}
+#dview .cbtn{width:36px;height:36px}
+#dview .cpop{position:static;display:none;width:100%;max-width:460px;margin-top:10px}#dview.cp .cpop{display:flex}
+#dobj .opts{grid-template-columns:repeat(3,1fr)}
 </style>
 </head>
 <body>
@@ -274,6 +284,10 @@ input[type=range]{touch-action:pan-y}
   <div class="gs"><label><span>HDRI 旋轉</span><b id="v_rot"></b></label><input type="range" id="rot" min="0" max="1" step="0.005"></div>
   
   
+  <h4>光線顏色</h4>
+  <div class="gs"><label><span>色相</span><b id="v_rayh"></b></label><input type="range" id="rayh" min="0" max="360" step="1"></div>
+  <div class="gs"><label><span>飽和</span><b id="v_rays"></b></label><input type="range" id="rays" min="0" max="100" step="1"></div>
+  <div class="gs"><label><span>亮度</span><b id="v_rayl"></b></label><input type="range" id="rayl" min="0" max="100" step="1"></div>
   <h4>全域設定</h4>
   <label>光束直徑 (mm)<input type="number" id="beam" value="30" min="1"></label>
   <label>每面光線數<input type="number" id="N" value="2" min="1" max="21"></label>
@@ -291,7 +305,7 @@ input[type=range]{touch-action:pan-y}
   <button class="btn" id="af2">屏幕移到焦點</button>
  </div>
  <button class="rb glass" id="lockb" title="鎖定此投影片視角"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.5-2"/></svg></button>
- <div id="fab"><div id="fabl"><button class="rb glass" id="tbb" title="新增文字方塊"><svg viewBox="0 0 24 24"><path d="M5 6V4h14v2M12 4v16M9 20h6"/></svg></button><button class="rb glass" id="glb" title="新增 Glow（背景光暈）"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="2 3"/></svg></button></div><button class="rb glass" id="fabm" title="新增"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button></div>
+ <div id="fab"><div id="fabl"><button class="rb glass" id="tbb" title="新增文字方塊"><svg viewBox="0 0 24 24"><path d="M5 6V4h14v2M12 4v16M9 20h6"/></svg></button><button class="rb glass" id="glb" title="新增 Glow（背景光暈）"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="2 3"/></svg></button><button class="rb glass" id="vbb" title="新增視角方塊"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><rect x="11" y="10" width="7" height="6" rx="1.5"/></svg></button></div><button class="rb glass" id="fabm" title="新增"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button></div>
  <div id="tools">
   <button class="rb glass" id="add" title="新增鏡片"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4c-3.2 3.4-3.2 12.6 0 16 3.2-3.4 3.2-12.6 0-16z"/><path d="M18 13v6M15 16h6"/></svg></button>
   <button class="rb glass" id="eye" title="自動移到從鏡片看過去的視角"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
@@ -313,7 +327,7 @@ input[type=range]{touch-action:pan-y}
   <div class="sl" data-k="R"><label><span>曲率半徑 R</span><span><input class="num" type="number" step="any"> mm</span></label><input type="range"></div>
   <div class="sl" data-k="D"><label><span>口徑</span><span><input class="num" type="number" step="any"> mm</span></label><input type="range"></div><div class="sl" data-k="E"><label><span>邊緣厚度</span><span><input class="num" type="number" step="any"> mm</span></label><input type="range"></div>
  </div>
-<div id="dobj"><div class="dh"><strong>觀察物體</strong><span class="sp"></span><button class="btn" id="dclose2" title="關閉"><svg viewBox="0 0 24 24" aria-hidden="true" class="ic"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="opts"><button data-o="plate"><svg viewBox="0 0 24 24" aria-hidden="true" class="ic"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8.5 10a3.75 3.75 0 0 1 7.5 0v8.4"/><circle cx="12.5" cy="14.8" r="3.2"/></svg>a 方板</button><button data-o="chk"><svg viewBox="0 0 24 24" aria-hidden="true" class="ic"><rect x="4" y="4" width="16" height="16" rx="1"/><rect x="4" y="4" width="8" height="8" fill="currentColor"/><rect x="12" y="12" width="8" height="8" fill="currentColor"/></svg>棋盤格</button></div><div class="grid"><div class="osl"><label><span>物體大小</span><span><input class="num" id="osz" type="number" step="any" min="1"> mm</span></label><input type="range" id="oszr" min="5" max="300" step="1"></div><div class="osl"><label><span>發光（自發光物體，無通光量衰減）</span></label><button class="btn" id="oglow">發光：關</button></div></div></div>
+<div id="dobj"><div class="dh"><strong>觀察物體</strong><span class="sp"></span><button class="btn" id="dclose2" title="關閉"><svg viewBox="0 0 24 24" aria-hidden="true" class="ic"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="opts"><button data-o="plate"><svg viewBox="0 0 24 24" aria-hidden="true" class="ic"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8.5 10a3.75 3.75 0 0 1 7.5 0v8.4"/><circle cx="12.5" cy="14.8" r="3.2"/></svg>a 方板</button><button data-o="chk"><svg viewBox="0 0 24 24" aria-hidden="true" class="ic"><rect x="4" y="4" width="16" height="16" rx="1"/><rect x="4" y="4" width="8" height="8" fill="currentColor"/><rect x="12" y="12" width="8" height="8" fill="currentColor"/></svg>棋盤格</button><button data-o="img"><svg viewBox="0 0 24 24" aria-hidden="true" class="ic"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg>照片</button></div><div class="grid"><div class="osl"><label><span>物體大小</span><span><input class="num" id="osz" type="number" step="any" min="1"> mm</span></label><input type="range" id="oszr" min="5" max="300" step="1"></div><div class="osl"><label><span>發光（自發光物體，無通光量衰減）</span></label><button class="btn" id="oglow">發光：關</button></div><div class="osl"><label><span>照片（原圖畫質，不壓縮）</span></label><button class="btn" id="oimgup">上傳照片</button><input type="file" id="ifile" accept="image/*" style="display:none"></div></div></div>
 <div id="dslides"><div class="dh"><strong>簡報投影片</strong><span class="sp"></span>
  <button class="btn pri" id="pplay"><svg viewBox="0 0 24 24" aria-hidden="true" class="ic"><path d="M7 4l13 8-13 8z"/></svg>播放簡報</button></div>
  <div class="dh2"><label class="tm"><input type="checkbox" id="pauto">自動播放</label> <label class="tm" id="holdw">停留<input class="num" id="phold" type="number" min="0.5" step="0.5" value="3">秒</label> <label class="tm">轉場<input class="num" id="ptrans" type="number" min="0.3" step="0.1" value="1.6">秒</label></div>
@@ -326,6 +340,14 @@ input[type=range]{touch-action:pan-y}
 <div class="osl" style="grid-column:1/-1"><label><span>顏色漸層（圓心 → 外圍）</span></label>
 <div class="gcr"><button class="cbtn" id="gb0" title="中心顏色"></button><div id="gprev"></div><button class="cbtn" id="gb1" title="外圍顏色"></button></div>
 <div class="cpop glass" id="gpop"><div class="cr"><span>色相</span><input type="range" min="0" max="360" step="1"></div><div class="cr"><span>飽和</span><input type="range" min="0" max="100" step="1"></div><div class="cr"><span>亮度</span><input type="range" min="0" max="100" step="1"></div></div></div>
+</div></div>
+<div id="dview" style="display:none"><div class="dh"><span class="dot" style="color:var(--acc);background:var(--acc)"></span><strong>視角方塊</strong><span class="sp"></span><button class="btn" id="vbedit">調整視角</button><button class="btn" id="vbcopy" title="把主畫面目前的視角複製到方塊">取用主視角</button><button class="btn danger" id="vbdel">刪除</button><button class="btn" id="vbclose" title="關閉"><svg viewBox="0 0 24 24" aria-hidden="true" class="ic"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<div id="vbhint" style="display:none;color:var(--mut);font-size:12px">在方塊內：拖曳旋轉　Shift／右鍵／雙指拖曳平移　滾輪／雙指縮放</div>
+<div class="grid">
+<div class="osl"><label><span>邊框粗細</span><span><input class="num" id="vbw" type="number" step="any"> %</span></label><input type="range" id="vbwr" min="0" max="3" step="0.05"></div>
+<div class="osl"><label><span>圓角</span><span><input class="num" id="vbr" type="number" step="any"> %</span></label><input type="range" id="vbrr" min="0" max="25" step="0.1"></div>
+<div class="osl" style="grid-column:1/-1"><label><span>邊框顏色</span></label><div><button class="cbtn" id="vbc" title="邊框顏色"></button></div>
+<div class="cpop glass" id="vbpop"><div class="cr"><span>色相</span><input type="range" min="0" max="360" step="1"></div><div class="cr"><span>飽和</span><input type="range" min="0" max="100" step="1"></div><div class="cr"><span>亮度</span><input type="range" min="0" max="100" step="1"></div></div></div>
 </div></div>
 </div></section>
 </div>
@@ -417,7 +439,7 @@ function panBy(dx,dy){
 function render(){
  cam();G.pj.value.set(camera.projectionMatrix.elements[0],camera.projectionMatrix.elements[5]);sky.position.copy(camera.position);sky.visible=false;
  if(gizmo.visible){const dd=camera.position.distanceTo(gizmo.position);gizmo.scale.setScalar(dd*2*Math.tan(camera.fov*Math.PI/360)/(stg.clientHeight||430)*80/66)}
- R.render(scene,camera);placeDims();pCam();
+ R.render(scene,camera);vbRender();placeDims();pCam();
 }
 function resize(){const w=stg.clientWidth,h=stg.clientHeight;R.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();render()}
 new ResizeObserver(resize).observe(stg);
@@ -569,16 +591,19 @@ vec3 plateCol(vec2 uv,float w){
  vec3 col=mix(vec3(0.953,0.961,0.976),vec3(0.604,0.643,0.722),bd);
  return mix(col,vec3(0.067,0.094,0.153),ink);
 }
+vec4 imgCol(vec2 uv){vec4 t=texture2D(uImg,uv);return vec4(t.a>0.002?t.rgb/t.a:t.rgb,t.a);}
 vec3 chkCol(vec2 uv,float w){
  vec2 x=uv*8.0;vec2 ww=vec2(w*8.0)+1e-5;
  vec2 i=2.0*(abs(fract((x-0.5*ww)*0.5)-0.5)-abs(fract((x+0.5*ww)*0.5)-0.5))/ww;
  return mix(vec3(0.90,0.92,0.95),vec3(0.14,0.17,0.24),0.5-0.5*i.x*i.y);
 }
 `;
-function planeMat(mode){return new THREE.ShaderMaterial({uniforms:{uTint:{value:new THREE.Color(1,1,1)},uGlow:{value:0},uPlate:{value:GLYPH}},vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',fragmentShader:'precision highp float;varying vec2 vUv;uniform vec3 uTint;uniform float uGlow;uniform sampler2D uPlate;'+PLATEGL+'void main(){float w=clamp(fwidth(vUv.x)+fwidth(vUv.y),0.0006,0.03);float cov=1.0-smoothstep(-w,w,rrSD(vUv-0.5));if(cov<0.01)discard;vec3 c='+(mode?'chkCol':'plateCol')+'(vUv,w);vec3 cc=c*uTint;if(uGlow>0.5)cc=cc*1.35+vec3(0.12);gl_FragColor=vec4(cc,cov);}',side:THREE.DoubleSide,transparent:true,extensions:{derivatives:true}})}
+const IMGU={value:null};IMGU.value=(()=>{const c=document.createElement('canvas');c.width=c.height=2;const g=c.getContext('2d');g.fillStyle='#888';g.fillRect(0,0,2,2);return new THREE.CanvasTexture(c)})();let IMGA=1;
+function planeMat(mode){return new THREE.ShaderMaterial({uniforms:{uTint:{value:new THREE.Color(1,1,1)},uGlow:{value:0},uPlate:{value:GLYPH},uImg:IMGU},vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',fragmentShader:'precision highp float;varying vec2 vUv;uniform vec3 uTint;uniform float uGlow;uniform sampler2D uPlate;uniform sampler2D uImg;'+PLATEGL+'void main(){float w=clamp(fwidth(vUv.x)+fwidth(vUv.y),0.0006,0.03);'+(mode==2?'vec4 tx=texture2D(uImg,vUv);float cov=tx.a;if(cov<0.004)discard;vec3 c=tx.rgb/cov;':'float cov=1.0-smoothstep(-w,w,rrSD(vUv-0.5));if(cov<0.01)discard;vec3 c='+['plateCol','chkCol'][mode]+'(vUv,w);')+'vec3 cc=c*uTint;if(uGlow>0.5)cc=cc*1.35+vec3(0.12);gl_FragColor=vec4(cc,cov);}',side:THREE.DoubleSide,transparent:true,extensions:{derivatives:true}})}
 const plate=new THREE.Mesh(new THREE.PlaneGeometry(1,1),planeMat(0));
 const chkObj=new THREE.Mesh(new THREE.PlaneGeometry(1,1),planeMat(1));
-[plate,chkObj].forEach(m=>{m.rotation.y=Math.PI/2;m.userData.id='cube';scene.add(m)});
+const imgObj=new THREE.Mesh(new THREE.PlaneGeometry(1,1),planeMat(2));
+[plate,chkObj,imgObj].forEach(m=>{m.rotation.y=Math.PI/2;m.userData.id='cube';scene.add(m)});
 let meshes=[];
 
 const HDRG=`
@@ -604,7 +629,7 @@ const FRAG=`
 precision highp float;
 ${HDRG}
 uniform vec4 uGl[8];uniform vec3 uGa[8];uniform vec3 uGb[8];uniform float uNg,uAsp;uniform vec2 uPj;
-uniform vec4 uLens[6];uniform vec4 uBoard;uniform vec3 uBg;uniform sampler2D uPlate;
+uniform vec4 uLens[6];uniform vec4 uBoard;uniform vec3 uBg;uniform sampler2D uPlate;uniform sampler2D uImg;
 uniform float uNf,uIdx,uSel,uIor,uDisp,uFres,uBlur,uBright,uCubeS,uAlpha,uGlow;
 uniform mat4 uCubeM,uCubeI;
 uniform sampler2D uFaces;
@@ -681,9 +706,11 @@ vec3 sceneCol(vec3 o,vec3 d,float envOn){
   float tb=(uBoard.x-o.x)/d.x;
   if(tb>0.0){
    vec3 p=o+d*tb;float hs=uBoard.y*0.5;
-   vec2 uvb=vec2(0.5-p.z/uBoard.y,0.5+p.y/uBoard.y);float wb=clamp(fwidth(uvb.x)+fwidth(uvb.y),0.0006,0.03);cov=1.0-smoothstep(-wb,wb,rrSD(uvb-0.5));if(cov>0.002){
+   float ba=uBoard.w>0.0?uBoard.w:1.0;float bwz=ba>=1.0?uBoard.y:uBoard.y*ba;float bhy=ba>=1.0?uBoard.y/ba:uBoard.y;
+   vec2 uvb=vec2(0.5-p.z/bwz,0.5+p.y/bhy);float wb=clamp(fwidth(uvb.x)+fwidth(uvb.y),0.0006,0.03);cov=uBoard.z>2.5?clamp(min(0.5-abs(uvb.x-0.5),0.5-abs(uvb.y-0.5))/wb+0.5,0.0,1.0):1.0-smoothstep(-wb,wb,rrSD(uvb-0.5));if(cov>0.002){
     if(uBoard.z<1.5)col=plateCol(uvb,wb);
-    else col=chkCol(uvb,wb);
+    else if(uBoard.z<2.5)col=chkCol(uvb,wb);
+    else{vec4 ic=imgCol(uvb);col=ic.rgb;cov*=ic.a;}
     if(uGlow>0.5)col=col*1.35+vec3(0.12);
     hit=true;
    }
@@ -745,7 +772,7 @@ void main(){
 `;
 const rt=new THREE.WebGLRenderTarget(2,2,{minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter});
 const G={glow:{value:0},ior:{value:S.n},disp:{value:S.disp},scene:{value:rt.texture},vp:{value:new THREE.Matrix4()},L:{value:160},lens:{value:Array.from({length:6},()=>new THREE.Vector4())},nf:{value:0},blur:{value:0},bright:{value:1},cubeM:{value:new THREE.Matrix4()},cubeI:{value:new THREE.Matrix4()},cubeS:{value:CUBE.s},faces:{value:ATLAS},board:{value:new THREE.Vector4(CUBE.x,CUBE.s,0,0)},bg:{value:new THREE.Color(0x070a12)},plate:{value:GLYPH},exp:{value:S.exp},rot:{value:S.rot},fres:{value:S.fres},env:{value:null}};
-G.gl={value:Array.from({length:8},()=>new THREE.Vector4())};G.ga={value:Array.from({length:8},()=>new THREE.Vector3())};G.gb={value:Array.from({length:8},()=>new THREE.Vector3())};G.ng={value:0};G.asp={value:1};G.pj={value:new THREE.Vector2(1,1)};
+G.img=IMGU;G.gl={value:Array.from({length:8},()=>new THREE.Vector4())};G.ga={value:Array.from({length:8},()=>new THREE.Vector3())};G.gb={value:Array.from({length:8},()=>new THREE.Vector3())};G.ng={value:0};G.asp={value:1};G.pj={value:new THREE.Vector2(1,1)};
 const HD={};{const c=document.createElement('canvas');c.width=c.height=2;const g=c.getContext('2d');g.fillStyle='#05070c';g.fillRect(0,0,2,2);G.env.value=new THREE.CanvasTexture(c)}
 {const im=new Image();im.onload=()=>{const x=new THREE.Texture(im);x.minFilter=x.magFilter=THREE.LinearFilter;x.generateMipmaps=false;x.wrapS=THREE.RepeatWrapping;x.needsUpdate=true;HD.hall=x;if(S.hd==='hall'){G.env.value=x;update()}};im.crossOrigin = 'anonymous';
 im.src = 'https://raw.githubusercontent.com/username1yee/convex-lens-sim/refs/heads/main/HDRI.png';}
@@ -763,14 +790,14 @@ function glassU(fo,sp){
  const ls=S.lenses.slice(0,6);G.nf.value=ls.length;
  ls.forEach((l,i)=>{const sh=shapeOf(l);G.lens.value[i].set(l.x,sh.Rr,sh.cz,sh.a)});
  cube.updateMatrixWorld(true);G.cubeM.value.copy(cube.matrixWorld);G.cubeI.value.copy(cube.matrixWorld).invert();
- G.board.value.set(CUBE.x,CUBE.s,({cube:0,plate:1,chk:2})[S.otype],0);G.bg.value.set(0x000000);
+ G.board.value.set(CUBE.x,CUBE.s,({cube:0,plate:1,chk:2,img:3})[S.otype],S.otype==='img'?IMGA:1);G.bg.value.set(0x000000);
  G.blur.value=blurAng(fo,sp);
  G.bright.value=(sp&&!S.glow)?.3+.7*sp.q:1;G.glow.value=S.glow?1:0;
 }
 function buildMeshes(){
  meshes.forEach(m=>{scene.remove(m);m.geometry.dispose();m.material.dispose()});meshes=[];
  S.lenses.forEach((l,i)=>{
-  const mat=new THREE.ShaderMaterial({uniforms:{uLens:G.lens,uNf:G.nf,uIdx:{value:i},uSel:{value:0},uAlpha:{value:1},uIor:G.ior,uDisp:G.disp,uFres:G.fres,uBlur:G.blur,uBright:G.bright,uCubeM:G.cubeM,uCubeI:G.cubeI,uCubeS:G.cubeS,uFaces:G.faces,uBoard:G.board,uGlow:G.glow,uGl:G.gl,uGa:G.ga,uGb:G.gb,uNg:G.ng,uAsp:G.asp,uPj:G.pj,uBg:G.bg,uPlate:G.plate,uEnv:G.env,uExp:G.exp,uRot:G.rot},vertexShader:VERT,fragmentShader:FRAG,side:THREE.DoubleSide});
+  const mat=new THREE.ShaderMaterial({uniforms:{uLens:G.lens,uNf:G.nf,uIdx:{value:i},uSel:{value:0},uAlpha:{value:1},uIor:G.ior,uDisp:G.disp,uFres:G.fres,uBlur:G.blur,uBright:G.bright,uCubeM:G.cubeM,uCubeI:G.cubeI,uCubeS:G.cubeS,uFaces:G.faces,uBoard:G.board,uImg:G.img,uGlow:G.glow,uGl:G.gl,uGa:G.ga,uGb:G.gb,uNg:G.ng,uAsp:G.asp,uPj:G.pj,uBg:G.bg,uPlate:G.plate,uEnv:G.env,uExp:G.exp,uRot:G.rot},vertexShader:VERT,fragmentShader:FRAG,side:THREE.DoubleSide});
   const m=new THREE.Mesh(new THREE.BufferGeometry(),mat);m.rotation.y=Math.PI/2;m.userData={id:i,key:l.f+'|'+l.D+'|'+S.n+'|'+l.E};
   applyShape(m,l);scene.add(m);meshes.push(m);
  });
@@ -787,7 +814,7 @@ function update(){
   if(m.userData.key!=key){applyShape(m,l);m.userData.key=key}
   m.position.x=l.x;m.material.uniforms.uSel.value=i===S.sel?1:0;
  });
- G.ior.value=S.n;G.disp.value=S.disp;G.exp.value=S.exp;G.rot.value=S.rot;G.fres.value=S.fres;fxApply();cube.visible=S.otype==='cube';plate.visible=S.otype==='plate';chkObj.visible=S.otype==='chk';[plate,chkObj].forEach(m=>{m.position.x=CUBE.x;m.scale.set(CUBE.s,CUBE.s,1);m.material.uniforms.uTint.value.setHex(S.sel==='cube'?0xfff0b8:0xffffff);m.material.uniforms.uGlow.value=S.glow?1:0});cube.position.x=CUBE.x;cube.scale.setScalar(CUBE.s/110);cube.children[0].material.forEach(mt=>{mt.emissive.setHex(S.glow?0xffffff:0);mt.emissiveIntensity=.85});cube.children[1].material.color.setHex(S.sel==='cube'?0xffc400:0x101828);scr.position.x=S.screen;setLines(scrMark,[S.screen,-8,0,S.screen,8,0,S.screen,0,-8,S.screen,0,8]);scrMark.material.color.setHex(S.sel==='screen'?0xffc400:0x8892a6);
+ G.ior.value=S.n;G.disp.value=S.disp;G.exp.value=S.exp;G.rot.value=S.rot;G.fres.value=S.fres;fxApply();cube.visible=S.otype==='cube';plate.visible=S.otype==='plate';chkObj.visible=S.otype==='chk';imgObj.visible=S.otype==='img';[plate,chkObj,imgObj].forEach(m=>{m.position.x=CUBE.x;{const a=m===imgObj?IMGA:1;m.scale.set(a>=1?CUBE.s:CUBE.s*a,a>=1?CUBE.s/a:CUBE.s,1)}m.material.uniforms.uTint.value.setHex(S.sel==='cube'?0xfff0b8:0xffffff);m.material.uniforms.uGlow.value=S.glow?1:0});cube.position.x=CUBE.x;cube.scale.setScalar(CUBE.s/110);cube.children[0].material.forEach(mt=>{mt.emissive.setHex(S.glow?0xffffff:0);mt.emissiveIntensity=.85});cube.children[1].material.color.setHex(S.sel==='cube'?0xffc400:0x101828);scr.position.x=S.screen;setLines(scrMark,[S.screen,-8,0,S.screen,8,0,S.screen,0,-8,S.screen,0,8]);scrMark.material.color.setHex(S.sel==='screen'?0xffc400:0x8892a6);
  // 修改後的程式碼：
 const N = Math.max(1, S.N);
 let B = S.beam / 2;
@@ -899,7 +926,7 @@ function end(e){
  const o=pt.get(e.pointerId),moved=o&&Math.hypot(e.clientX-o.x0,e.clientY-o.y0)>5;
  pt.delete(e.pointerId);if(pt.size<2)pinch=null;
  if(e.type=='pointerup'&&!moved&&dr&&dr.t=='o'){
-  rc.setFromCamera(ndc(e),camera);const hs=rc.intersectObjects([...meshes.filter(m=>m.visible),scr,...[cube,plate,chkObj].filter(o=>o.visible)],true);const pk=f=>{for(const h of hs){let ob=h.object;while(ob.parent&&ob.userData.id===undefined)ob=ob.parent;const k=ob.userData.id;if(k===undefined)continue;if(f(k))return k}return null};let id=pk(k=>typeof k==='number');if(id===null)id=pk(()=>true);
+  rc.setFromCamera(ndc(e),camera);const hs=rc.intersectObjects([...meshes.filter(m=>m.visible),scr,...[cube,plate,chkObj,imgObj].filter(o=>o.visible)],true);const pk=f=>{for(const h of hs){let ob=h.object;while(ob.parent&&ob.userData.id===undefined)ob=ob.parent;const k=ob.userData.id;if(k===undefined)continue;if(f(k))return k}return null};let id=pk(k=>typeof k==='number');if(id===null)id=pk(()=>true);
   S.sel=id;update();
  }
  dr=null;V.lock=false;follow();
@@ -930,8 +957,8 @@ function sync(){
  });
 }
 function dash(){
- const isT=!!tbSel&&P.on&&!P.playing,isG=!!glSel&&P.on&&!P.playing&&!isT,isObj=S.sel==='cube'&&!isT&&!isG,isL=!!curLens()&&!isT&&!isG;$('#dtext').style.display=isT?'flex':'none';$('#dglow').style.display=isG?'block':'none';$('#dhl').style.display=isL?'':'none';$('#dgl').style.display=isL?'':'none';$('#dobj').style.display=isObj?'flex':'none';document.querySelectorAll('.opts button').forEach(b=>b.classList.toggle('act',b.dataset.o===S.otype));
- const l=curLens(),showSl=P.on&&!l&&!isObj&&!isT&&!isG;$('#dslides').style.display=showSl?'flex':'none';app.classList.toggle('open',(isL||isObj||showSl||isT||isG)&&!P.playing);app.classList.toggle('pm',P.on);app.classList.toggle('play',P.playing);
+ const isT=!!tbSel&&P.on&&!P.playing,isG=!!glSel&&P.on&&!P.playing&&!isT,isV=!!vbSel&&P.on&&!P.playing&&!isT&&!isG,isObj=S.sel==='cube'&&!isT&&!isG&&!isV,isL=!!curLens()&&!isT&&!isG&&!isV;$('#dview').style.display=isV?'flex':'none';$('#dtext').style.display=isT?'flex':'none';$('#dglow').style.display=isG?'block':'none';$('#dhl').style.display=isL?'':'none';$('#dgl').style.display=isL?'':'none';$('#dobj').style.display=isObj?'flex':'none';document.querySelectorAll('.opts button').forEach(b=>b.classList.toggle('act',b.dataset.o===S.otype));
+ const l=curLens(),showSl=P.on&&!l&&!isObj&&!isT&&!isG&&!isV;$('#dslides').style.display=showSl?'flex':'none';app.classList.toggle('open',(isL||isObj||showSl||isT||isG||isV)&&!P.playing);app.classList.toggle('pm',P.on);app.classList.toggle('play',P.playing);
  if(l){$('#dtitle').textContent='鏡片 L'+(S.sel+1);const c=hex(COL[S.sel%6]);$('#ddot').style.background=c;$('#ddot').style.color=c}
  sync();
 }
@@ -1053,7 +1080,7 @@ const TC=document.createElement('canvas');TC.width=192;TC.height=108;
 function pThumb(){
  const s=curSlide();if(!P.on||P.playing||!s)return;
  try{
-  R.render(scene,camera);
+  R.render(scene,camera);vbRender();
   const g=TC.getContext('2d'),w=R.domElement.width,h=R.domElement.height,ar=192/108;
   let sw=w,sh=w/ar;if(sh>h){sh=h;sw=h*ar}
   g.fillStyle='#000';g.fillRect(0,0,192,108);(s.gl||[]).forEach(q=>{const k=192/sw,cx=(q.x*w-(w-sw)/2)*k,cy=(q.y*h-(h-sh)/2)*k,gr=g.createRadialGradient(cx,cy,0,cx,cy,Math.max(1,q.r*w*k));glStops(q,1).forEach(([t,c])=>gr.addColorStop(t,c));g.fillStyle=gr;g.fillRect(0,0,192,108)});
@@ -1138,7 +1165,7 @@ function mixSt(a,b,e){
  return o;
 }
 let pb=null;
-function pShow(i){const s=P.slides[i];glDraw(s.gl||[]);setCam(s.cam);applySt(s.st)}
+function pShow(i){const s=P.slides[i];vbSet(s.vb||[]);glDraw(s.gl||[]);setCam(s.cam);applySt(s.st)}
 function pCount(){if($('#pcount'))$('#pcount').textContent=(pb.from+1)+' / '+P.slides.length}
 function pPlay(){if(!P.playing){tbSelect(null);tbKey=''}
  if(P.playing||!P.slides.length)return;
@@ -1170,7 +1197,7 @@ function pFrame(now){tbTick();if(P.playing&&(pb.phase==='out'||pb.phase==='in'))
     rayProgress: rayProg, // 傳遞畫線進度
     dims: (A.st.dims ? 1 : 0) + ((B.st.dims ? 1 : 0) - (A.st.dims ? 1 : 0)) * e
   };
-  glDraw(glMix(A.gl||[],B.gl||[],e));applySt(mixSt(A.st, B.st, e));
+  vbSet(vbMix(A.vb||[],B.vb||[],e));glDraw(glMix(A.gl||[],B.gl||[],e));applySt(mixSt(A.st, B.st, e));
 
 
   if(p>=1){FX=null;pb.from=pb.to;pb.phase=tbHas(pb.from)?'in':'hold';pb.t0=now;pCount()}
@@ -1342,11 +1369,11 @@ function tbRender(){
  TBL.style.display=P.on?'':'none';
  if(!list.includes(tbSel))tbSel=null;
  if(P.on)list.forEach(t=>tbA.appendChild(tbMake(t,true)));
- tbA.style.opacity=1;tbB.style.opacity=1;tbRb=false;tbPT=null;tbPanel();glReload();dash();
+ tbA.style.opacity=1;tbB.style.opacity=1;tbRb=false;tbPT=null;tbPanel();vbReload();glReload();dash();
 }
 function tbSelect(t){
  if(!t){const a=document.activeElement;if(a&&a.isContentEditable)a.blur()}
- if(t&&glSel){glSel=null;[...$('#tbG').children].forEach(h=>h.classList.remove('sel'))}tbSel=t;[...tbA.children].forEach(c=>{c.classList.toggle('sel',c._t===t);if(c._t!==t){c.classList.remove('cp','fp','sp','ap')}else tbApply(c,t)});tbPanel();dash();
+ if(t&&vbSel)vbSelect(null);if(t&&glSel){glSel=null;[...$('#tbG').children].forEach(h=>h.classList.remove('sel'))}tbSel=t;[...tbA.children].forEach(c=>{c.classList.toggle('sel',c._t===t);if(c._t!==t){c.classList.remove('cp','fp','sp','ap')}else tbApply(c,t)});tbPanel();dash();
 }
 const TBHTML='<div class="tbt glass"><button class="cbtn" title="文字顏色"></button><button class="btn fbtn" title="字體">Aa</button><button class="btn tbs" data-s="b" title="粗體"><b>B</b></button><button class="btn tbs" data-s="i" title="斜體"><i>I</i></button><button class="btn spbtn" title="字距／行距"><svg viewBox="0 0 24 24" class="ic"><path d="M4 5v14M20 5v14M8 12h8M8 12l2-2M8 12l2 2M16 12l-2-2M16 12l-2 2"/></svg></button><button class="btn albtn" title="對齊"></button><button class="btn danger tbd" title="刪除"><svg viewBox="0 0 24 24" class="ic"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button><div class="apop glass"></div><div class="spop glass"><div class="cr"><span>字距</span><input type="range" min="-0.1" max="1" step="0.01"><span></span></div><div class="cr"><span>行距</span><input type="range" min="0.8" max="3" step="0.05"><span></span></div></div><div class="fpop glass"></div><div class="cpop glass"><div class="cr"><span>色相</span><input type="range" min="0" max="360" step="1"></div><div class="cr"><span>飽和</span><input type="range" min="0" max="100" step="1"></div><div class="cr"><span>亮度</span><input type="range" min="0" max="100" step="1"></div><div class="cr"><span>透明度</span><input type="range" min="0" max="100" step="1"></div></div></div>';
 function tbPanel(){
@@ -1428,7 +1455,7 @@ function tbTick(){
 }
 const _pGo=pGo;pGo=function(i){_pGo(i);resetZ();syncAuto();tbRender()};
 const _pToggle=pToggle;pToggle=function(on){_pToggle(on);if(on)$('#set').classList.remove('on');$('#fab').classList.remove('open');syncAuto();tbRender()};
-const _mkSlide=mkSlide;mkSlide=function(f){const s=_mkSlide(f);s.tb=f?JSON.parse(JSON.stringify(f.tb||[])):[];s.gl=f?JSON.parse(JSON.stringify(f.gl||[])):[];s.auto=f?!!f.auto:false;s.hold=f?(f.hold||3):3;return s};
+const _mkSlide=mkSlide;mkSlide=function(f){const s=_mkSlide(f);s.tb=f?JSON.parse(JSON.stringify(f.tb||[])):[];s.gl=f?JSON.parse(JSON.stringify(f.gl||[])):[];s.vb=f?JSON.parse(JSON.stringify(f.vb||[])):[];s.auto=f?!!f.auto:false;s.hold=f?(f.hold||3):3;return s};
 $('#tbb').onclick=()=>{tbAdd();$('#fab').classList.remove('open')};$('#fabm').onclick=()=>$('#fab').classList.toggle('open');
 document.addEventListener('pointerdown',e=>{if(!e.target.closest('#fab'))$('#fab').classList.remove('open')});
 dom.addEventListener('pointerdown',()=>{if(!P.playing&&tbSel)tbSelect(null);if(!P.playing&&glSel)glSelect(null)});
@@ -1491,7 +1518,7 @@ function glMarks(){
 }
 let glDrag=null,gSide=0,gHSL=null;
 function glReload(){if(!glList().includes(glSel))glSel=null;glDraw(glList());glMarks();glSync()}
-function glSelect(g){
+function glSelect(g){if(g&&vbSel)vbSelect(null);
  if(g&&tbSel)tbSelect(null);
  gHSL=null;$('#dglow').classList.remove('cp');glSel=g;[...$('#tbG').children].forEach(h=>h.classList.toggle('sel',h._g===g));glSync();dash();
 }
@@ -1710,13 +1737,14 @@ async function projSave(){
   if(P.playing)pStop();
   pSave();const cs=curSlide();if(P.on&&cs&&!cs.lock)cs.cam=cam0();
   const zip=new JSZip();
-  const pr={app:'convex-lens-sim',version:1,hudOn:$('#hudon').checked,S:snap(),hd:S.hd,pon:P.on,cur:P.cur,view:cam0(),
+  const pr={app:'convex-lens-sim',version:1,hudOn:$('#hudon').checked,ray:S.ray.slice(),S:snap(),hd:S.hd,pon:P.on,cur:P.cur,view:cam0(),
    ratioV:($('#ratl .fi.act')||{dataset:{v:'16:9'}}).dataset.v,ptrans:parseFloat($('#ptrans').value)||1.6,
    auto:{gmin:$('#gmin').value,lo:$('#lo').value,qmin:$('#qmin').value,fitobj:$('#fitobj').checked},
-   slides:P.slides.map(x=>({st:x.st,cam:x.cam,lock:!!x.lock,thumb:x.thumb||null,tb:x.tb||[],gl:x.gl||[],auto:!!x.auto,hold:x.hold||3})),
+   slides:P.slides.map(x=>({st:x.st,cam:x.cam,lock:!!x.lock,thumb:x.thumb||null,tb:x.tb||[],gl:x.gl||[],vb:x.vb||[],auto:!!x.auto,hold:x.hold||3})),
    fonts:[],hdri:null};
   UF.forEach((fam,i)=>{const u=UFILES[fam];if(!u)return;const fn='assets/fonts/font'+(i+1)+extOf(u.name,'.ttf');zip.file(fn,u.buf);pr.fonts.push({family:fam,file:fn,name:u.name})});
   if(HDFILE){const fn='assets/hdri'+extOf(HDFILE.name,'.png');zip.file(fn,HDFILE.blob);pr.hdri=fn}
+  if(IMG){const fn='assets/object'+extOf(IMG.name,'.png');zip.file(fn,IMG.blob);pr.img=fn}
   zip.file('project.json',JSON.stringify(pr));
   const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='convex-lens-project.zip';
@@ -1741,6 +1769,9 @@ async function projLoad(file){
    HD.custom=await new Promise((res,rej)=>{const im=new Image();im.onload=()=>{const x=new THREE.Texture(im);x.minFilter=x.magFilter=THREE.LinearFilter;x.generateMipmaps=false;x.wrapS=THREE.RepeatWrapping;x.needsUpdate=true;res(x)};im.onerror=()=>rej(new Error('HDRI 圖片無法讀取'));im.src=URL.createObjectURL(blob)});
    HDFILE={blob,name:pr.hdri};
   }
+  imgClear();
+  if(pr.img&&zip.file(pr.img)){const ib=await zip.file(pr.img).async('blob');await imgSet(new File([ib],pr.img.split('/').pop()))}
+  if(Array.isArray(pr.ray)){S.ray=pr.ray.slice();rayApply();raySync()}
   if(P.on)pToggle(false);
   tbSelect(null);glSelect(null);
   S.hd=(pr.hd==='custom'&&HD.custom)?'custom':'hall';
@@ -1750,7 +1781,7 @@ async function projLoad(file){
   const A=pr.auto||{};['gmin','lo','qmin'].forEach(k=>{if(A[k]!=null)$('#'+k).value=A[k]});if(A.fitobj!=null)$('#fitobj').checked=!!A.fitobj;
   if(pr.ptrans)$('#ptrans').value=pr.ptrans;if(pr.hudOn!=null){$('#hudon').checked=!!pr.hudOn;$('#hudon').onchange()}
   const rb=[...$('#ratl').querySelectorAll('.fi')].find(b=>b.dataset.v===pr.ratioV);if(rb)rb.click();
-  P.slides=(pr.slides||[]).map(x=>({st:x.st,cam:x.cam,lock:!!x.lock,thumb:x.thumb||null,tb:x.tb||[],gl:x.gl||[],auto:!!x.auto,hold:x.hold||3}));
+  P.slides=(pr.slides||[]).map(x=>({st:x.st,cam:x.cam,lock:!!x.lock,thumb:x.thumb||null,tb:x.tb||[],gl:x.gl||[],vb:x.vb||[],auto:!!x.auto,hold:x.hold||3}));
   P.cur=P.slides.length?clamp(pr.cur|0,0,P.slides.length-1):0;
   applySt(pr.S);capD();
   if(pr.pon&&P.slides.length)pToggle(true);
@@ -1762,6 +1793,271 @@ async function projLoad(file){
 $('#psave').onclick=projSave;
 $('#pload').onclick=()=>$('#pfile').click();
 $('#pfile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)projLoad(f)};
+// ---------- 光線顏色 ----------
+S.ray=[25,100,55];
+function rayApply(){
+ const[h,s2,l]=S.ray;
+ rayOK.material.color.setHSL(h/360,s2/100,l/100);
+ rayBk.material.color.setHSL(h/360,s2/100*.67,l/100*.73);
+}
+function raySync(){
+ const[h,s2,l]=S.ray;
+ [['rayh',h,'°'],['rays',s2,'%'],['rayl',l,'%']].forEach(([id,v,u])=>{$('#'+id).value=v;$('#v_'+id).textContent=v+u});
+ $('#rayh').style.background='linear-gradient(90deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)';
+ $('#rays').style.background='linear-gradient(90deg,hsl('+h+',0%,'+l+'%),hsl('+h+',100%,'+l+'%))';
+ $('#rayl').style.background='linear-gradient(90deg,#000,hsl('+h+','+s2+'%,50%),#fff)';
+}
+['rayh','rays','rayl'].forEach((id,i)=>{
+ $('#'+id).addEventListener('input',e=>{S.ray[i]=+e.target.value;rayApply();raySync();render()});
+ armSlider($('#'+id),()=>[25,100,55][i]);
+});
+rayApply();raySync();
+// ---------- 觀察物體：上傳照片（原圖，不縮放不壓縮） ----------
+var IMG=null;
+function imgClear(){
+ if(IMGU.value&&IMGU.value.image&&IMG)IMGU.value.dispose();
+ IMG=null;IMGA=1;
+ const c=document.createElement('canvas');c.width=c.height=2;const g=c.getContext('2d');g.fillStyle='#888';g.fillRect(0,0,2,2);
+ IMGU.value=new THREE.CanvasTexture(c);
+ if(S.otype==='img')S.otype='plate';
+}
+async function imgSet(file){
+ const url=URL.createObjectURL(file),im=new Image();
+ await new Promise((res,rej)=>{im.onload=res;im.onerror=()=>rej(new Error('無法讀取這張圖片'));im.src=url});
+ URL.revokeObjectURL(url);
+ const tex=new THREE.Texture(im);
+ tex.minFilter=THREE.LinearMipmapLinearFilter;tex.magFilter=THREE.LinearFilter;tex.generateMipmaps=true;tex.premultiplyAlpha=true;
+ tex.anisotropy=R.capabilities.getMaxAnisotropy();tex.wrapS=tex.wrapT=THREE.ClampToEdgeWrapping;tex.needsUpdate=true;
+ const old=IMGU.value;IMGU.value=tex;if(old&&old.dispose)old.dispose();
+ IMG={blob:file,name:file.name||'object.png'};IMGA=im.naturalWidth/im.naturalHeight||1;
+ if(Math.max(im.naturalWidth,im.naturalHeight)>R.capabilities.maxTextureSize)toast().textContent='圖片超過此裝置的貼圖上限（'+R.capabilities.maxTextureSize+'px），顯示時會被縮小，但儲存的原檔不受影響。';
+}
+async function imgPick(f){
+ try{await imgSet(f);S.otype='img';update()}
+ catch(e){toast().textContent='上傳失敗：'+e.message}
+}
+$('#ifile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)imgPick(f)};
+$('#oimgup').onclick=()=>$('#ifile').click();
+document.querySelectorAll('.opts button').forEach(b=>{if(b.dataset.o==='img')b.onclick=()=>{if(IMG){S.otype='img';update()}else $('#ifile').click()}});
+// ---------- 視角方塊 ----------
+var VB={list:[],rt:null,mat:null,sc:null,oc:null,cam:null,tv:null},vbSel=null,vbEdit=false;
+const UVF=['x','y','w','h','bw','rad','c','az','el','d','tx','ty','tz'];
+const UVN={x:'X',y:'Y',w:'寬度',h:'高度',bw:'邊框粗細',rad:'圓角',c:'邊框顏色',az:'視角',el:'視角',d:'視角',tx:'視角',ty:'視角',tz:'視角'};
+function vget(o,f){const c=o.cam;switch(f){case'az':return c.az;case'el':return c.el;case'd':return c.d;case'tx':return c.t[0];case'ty':return c.t[1];case'tz':return c.t[2]}return o[f]}
+function vset(o,f,v){const c=o.cam;switch(f){case'az':c.az=v;break;case'el':c.el=v;break;case'd':c.d=v;break;case'tx':c.t[0]=v;break;case'ty':c.t[1]=v;break;case'tz':c.t[2]=v;break;default:o[f]=v}}
+function camLerp(a,b,e){let da=b.az-a.az;da=Math.atan2(Math.sin(da),Math.cos(da));return{az:a.az+da*e,el:a.el+(b.el-a.el)*e,d:a.d*Math.pow(b.d/a.d,e),t:[0,1,2].map(i=>a.t[i]+(b.t[i]-a.t[i])*e)}}
+function vbMix(A,B,e){
+ const out=[],n=Math.max(A.length,B.length);
+ for(let i=0;i<n;i++){const a=A[i],b=B[i];
+  if(a&&b){const L=k=>a[k]+(b[k]-a[k])*e;out.push({x:L('x'),y:L('y'),w:L('w'),h:L('h'),bw:L('bw'),rad:L('rad'),c:toHex(mixc(hx(a.c),hx(b.c),e)),cam:camLerp(a.cam,b.cam,e)})}
+  else if(a)out.push({...a,al:1-e});else out.push({...b,al:e});
+ }
+ return out;
+}
+function vbSet(list){VB.list=list}
+function vbInit(){
+ if(VB.mat)return;
+ VB.cam=new THREE.PerspectiveCamera(40,1,.1,5000);VB.tv=new THREE.Vector3();
+ VB.oc=new THREE.OrthographicCamera(-1,1,1,-1,0,1);VB.sc=new THREE.Scene();
+ VB.mat=new THREE.ShaderMaterial({
+  uniforms:{uT:{value:null},uRect:{value:new THREE.Vector4()},uSz:{value:new THREE.Vector2(1,1)},uRad:{value:0},uBw:{value:0},uAl:{value:1},uBA:{value:1},uDpr:{value:1},uBc:{value:new THREE.Color(1,1,1)},uGl:G.gl,uGa:G.ga,uGb:G.gb,uNg:G.ng},
+  vertexShader:'varying vec2 vUv;uniform vec4 uRect;void main(){vUv=uv;vec2 p=mix(uRect.xy,uRect.zw,uv);gl_Position=vec4(p,0.0,1.0);}',
+  fragmentShader:`precision highp float;
+varying vec2 vUv;uniform sampler2D uT;uniform vec2 uSz;uniform float uRad,uBw,uAl,uBA,uDpr,uNg;uniform vec3 uBc;
+uniform vec4 uGl[8];uniform vec3 uGa[8];uniform vec3 uGb[8];
+float sdRR(vec2 p,vec2 b,float r){vec2 q=abs(p)-b+r;return length(max(q,0.0))+min(max(q.x,q.y),0.0)-r;}
+void main(){
+ vec2 p=(vUv-0.5)*uSz;
+ float r=min(uRad,0.5*min(uSz.x,uSz.y));
+ float d=sdRR(p,0.5*uSz,r);
+ float cov=clamp(0.5-d*uDpr,0.0,1.0);
+ if(cov<=0.0)discard;
+ vec4 t=texture2D(uT,vUv);
+ vec3 bg=vec3(0.0);vec2 uv=vec2(vUv.x,1.0-vUv.y);float e0=exp(-3.2);
+ for(int i=0;i<8;i++){
+  if(float(i)>=uNg)break;
+  vec4 g=uGl[i];
+  float tt=length(vec2(uv.x-g.x,(uv.y-g.y)*uBA))/g.z;
+  if(tt>=1.0)continue;
+  float k=(exp(-3.2*tt*tt)-e0)/(1.0-e0);
+  bg=mix(bg,mix(uGa[i],uGb[i],tt),g.w*k);
+ }
+ vec3 col=t.rgb+bg*(1.0-t.a);
+ if(uBw>0.0){float fill=clamp(0.5-(d+uBw)*uDpr,0.0,1.0);col=mix(uBc,col,fill);}
+ gl_FragColor=vec4(col,cov*uAl);
+}`,
+  transparent:true,depthTest:false,depthWrite:false,side:THREE.DoubleSide});
+ const m=new THREE.Mesh(new THREE.PlaneGeometry(2,2),VB.mat);m.frustumCulled=false;VB.sc.add(m);
+}
+function vbRT(w,h){
+ if(!VB.rt){
+  const o={minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,format:THREE.RGBAFormat};
+  try{VB.rt=(R.capabilities.isWebGL2&&THREE.WebGLMultisampleRenderTarget)?new THREE.WebGLMultisampleRenderTarget(w,h,o):new THREE.WebGLRenderTarget(w,h,o)}
+  catch(e){VB.rt=new THREE.WebGLRenderTarget(w,h,o)}
+ }
+ if(VB.rt.width!==w||VB.rt.height!==h)VB.rt.setSize(w,h);
+ return VB.rt;
+}
+function vbRender(){
+ const L=VB.list;if(!L||!L.length)return;
+ const W=stg.clientWidth,H=stg.clientHeight;if(!W||!H)return;
+ vbInit();
+ const dpr=R.getPixelRatio(),gv=gizmo.visible,dv=dimL.visible,ac=R.autoClear,pj0=G.pj.value.clone(),asp0=G.asp.value;
+ const us=meshes.map(m=>m.material.uniforms.uSel.value);meshes.forEach(m=>m.material.uniforms.uSel.value=0);
+ gizmo.visible=false;dimL.visible=false;
+ L.forEach(b=>{
+  const bw=Math.max(8,b.w*W),bh=Math.max(8,b.h*W),pw=Math.min(2048,Math.max(2,Math.round(bw*dpr))),ph=Math.min(2048,Math.max(2,Math.round(bh*dpr)));
+  const c=VB.cam,cm=b.cam;c.aspect=bw/bh;c.updateProjectionMatrix();
+  c.position.set(cm.t[0]+cm.d*Math.cos(cm.el)*Math.sin(cm.az),cm.t[1]+cm.d*Math.sin(cm.el),cm.t[2]+cm.d*Math.cos(cm.el)*Math.cos(cm.az));
+  c.lookAt(VB.tv.set(cm.t[0],cm.t[1],cm.t[2]));c.updateMatrixWorld(true);
+  G.pj.value.set(c.projectionMatrix.elements[0],c.projectionMatrix.elements[5]);G.asp.value=bh/bw;
+  const rt=vbRT(pw,ph);
+  R.autoClear=true;R.setRenderTarget(rt);R.render(scene,c);R.setRenderTarget(null);
+  const u=VB.mat.uniforms,x0=b.x*W,y0=b.y*H;
+  u.uT.value=rt.texture;
+  u.uRect.value.set(2*x0/W-1,1-2*(y0+bh)/H,2*(x0+bw)/W-1,1-2*y0/H);
+  u.uSz.value.set(bw,bh);u.uRad.value=Math.max(0,b.rad*W);u.uBw.value=Math.max(0,b.bw*W);
+  u.uAl.value=b.al==null?1:b.al;u.uBA.value=bh/bw;u.uDpr.value=dpr;u.uBc.value.set(b.c||'#ffffff');
+  R.autoClear=false;R.render(VB.sc,VB.oc);
+ });
+ R.autoClear=ac;gizmo.visible=gv;dimL.visible=dv;
+ meshes.forEach((m,i)=>m.material.uniforms.uSel.value=us[i]);
+ G.pj.value.copy(pj0);G.asp.value=asp0;
+}
+// --- 編輯用覆蓋層 ---
+const vbL=document.createElement('div');vbL.id='tbV';TBL.insertBefore(vbL,TBL.firstChild);
+const vbPts=new Map();let vbDrag=null,vbHSL=null;
+function vbApplyEl(el,b){
+ const W=VW(),H=VH(),s=el.style,w=b.w*W,h=b.h*W;
+ s.left=b.x*W+'px';s.top=b.y*H+'px';s.width=w+'px';s.height=h+'px';s.borderRadius=Math.min(b.rad*W,w/2,h/2)+'px';
+}
+function vbMake(b){
+ const el=document.createElement('div');el.className='vb'+(b===vbSel?' sel':'')+(b===vbSel&&vbEdit?' ev':'');el._b=b;
+ el.innerHTML=['nw','n','ne','e','se','s','sw','w'].map(p=>'<i class="hd '+p+'" data-p="'+p+'"></i>').join('');
+ vbApplyEl(el,b);
+ el.addEventListener('pointerdown',e=>vbDown(e,el,b));
+ el.addEventListener('pointermove',e=>vbMove(e));
+ el.addEventListener('pointerup',vbUp);el.addEventListener('pointercancel',vbUp);
+ el.addEventListener('wheel',e=>{if(vbSel===b&&vbEdit){e.preventDefault();b.cam.d=clamp(b.cam.d*(e.deltaY<0?.9:1.1),1,4000);render()}},{passive:false});
+ el.addEventListener('contextmenu',e=>e.preventDefault());
+ return el;
+}
+function vbMarks(){
+ vbL.innerHTML='';vbPts.clear();vbDrag=null;
+ if(!P.on||P.playing)return;
+ const s=curSlide();((s&&s.vb)||[]).forEach(b=>vbL.appendChild(vbMake(b)));
+}
+function vbReload(){
+ const s=curSlide(),list=(P.on&&s)?(s.vb||(s.vb=[])):[];
+ if(!list.includes(vbSel)){vbSel=null;vbEdit=false}
+ if(!P.playing)VB.list=list;
+ vbMarks();
+}
+function vbSelect(b){
+ if(b&&tbSel)tbSelect(null);if(b&&glSel)glSelect(null);
+ vbSel=b;if(!b)vbEdit=false;
+ $('#dview').classList.remove('cp');
+ [...vbL.children].forEach(c=>{c.classList.toggle('sel',c._b===b);c.classList.toggle('ev',c._b===b&&vbEdit)});
+ vbSync();dash();
+}
+function vbSync(){
+ const b=vbSel;if(!b)return;
+ const set=(n,r,v)=>{const i=$('#'+n);if(document.activeElement!==i)i.value=f1(v);const e=$('#'+r);e.value=v;e.style.setProperty('--p',((e.value-e.min)/(e.max-e.min)*100)+'%')};
+ set('vbw','vbwr',b.bw*100);set('vbr','vbrr',b.rad*100);
+ $('#vbc').style.background=b.c;
+ $('#vbedit').classList.toggle('act',vbEdit);$('#vbedit').textContent=vbEdit?'完成視角':'調整視角';
+ $('#vbhint').style.display=vbEdit?'':'none';
+}
+function vbChange(fn){const b=vbSel;if(!b)return;fn(b);const el=[...vbL.children].find(c=>c._b===b);if(el)vbApplyEl(el,b);vbSync();render()}
+function vbPan(b,dx,dy){
+ const cm=b.cam,k=2*cm.d*Math.tan(20*Math.PI/180)/Math.max(1,b.h*VW())/Z.s;
+ const f=[-Math.cos(cm.el)*Math.sin(cm.az),-Math.sin(cm.el),-Math.cos(cm.el)*Math.cos(cm.az)];
+ let r=[-f[2],0,f[0]];const rl=Math.hypot(r[0],r[2])||1;r=[r[0]/rl,0,r[2]/rl];
+ const u=[r[1]*f[2]-r[2]*f[1],r[2]*f[0]-r[0]*f[2],r[0]*f[1]-r[1]*f[0]];
+ for(let i=0;i<3;i++)cm.t[i]+=r[i]*(-dx*k)+u[i]*(dy*k);
+}
+function vbDown(e,el,b){
+ if(P.playing)return;
+ e.preventDefault();e.stopPropagation();
+ if(vbSel!==b){vbSelect(b);return}
+ try{el.setPointerCapture(e.pointerId)}catch(_){}
+ vbPts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ if(vbPts.size===2){const[a,c]=[...vbPts.values()];vbDrag={b,m:'pz',pd:Math.hypot(a.x-c.x,a.y-c.y)||1,px:(a.x+c.x)/2,py:(a.y+c.y)/2};return}
+ if(vbPts.size>2)return;
+ const h=e.target.closest('.hd'),W=VW(),H=VH();
+ vbDrag={b,el,m:(vbEdit&&!h)?((e.button===2||e.shiftKey)?'pan':'orbit'):(h?h.dataset.p:'move'),sx:e.clientX,sy:e.clientY,lx:e.clientX,ly:e.clientY,x0:b.x*W,y0:b.y*H,w0:b.w*W,h0:b.h*W};
+}
+function vbMove(e){
+ const p=vbPts.get(e.pointerId);if(!p)return;p.x=e.clientX;p.y=e.clientY;
+ const d=vbDrag;if(!d)return;const b=d.b,W=VW(),H=VH();
+ if(d.m==='pz'){
+  if(vbPts.size<2)return;
+  const[a,c]=[...vbPts.values()],nd=Math.hypot(a.x-c.x,a.y-c.y)||1,mx=(a.x+c.x)/2,my=(a.y+c.y)/2;
+  if(vbEdit){b.cam.d=clamp(b.cam.d*d.pd/nd,1,4000);vbPan(b,mx-d.px,my-d.py);render()}
+  d.pd=nd;d.px=mx;d.py=my;return;
+ }
+ const mx=e.clientX-d.lx,my=e.clientY-d.ly;d.lx=e.clientX;d.ly=e.clientY;
+ if(d.m==='orbit'){b.cam.az-=mx*.008;b.cam.el=clamp(b.cam.el+my*.008,-1.45,1.45);render();return}
+ if(d.m==='pan'){vbPan(b,mx,my);render();return}
+ const dx=(e.clientX-d.sx)/Z.s,dy=(e.clientY-d.sy)/Z.s;
+ if(d.m==='move'){b.x=clamp(d.x0+dx,30-d.w0,W-30)/W;b.y=clamp(d.y0+dy,30-d.h0,H-30)/H}
+ else{
+  const q=d.m;let x=d.x0,y=d.y0,w=d.w0,h=d.h0;
+  if(q.includes('e'))w=Math.max(40,d.w0+dx);
+  if(q.includes('w')){w=Math.max(40,d.w0-dx);x=d.x0+d.w0-w}
+  if(q.includes('s'))h=Math.max(40,d.h0+dy);
+  if(q.includes('n')){h=Math.max(40,d.h0-dy);y=d.y0+d.h0-h}
+  b.x=x/W;b.y=y/H;b.w=w/W;b.h=h/W;
+ }
+ vbApplyEl(d.el,b);render();
+}
+function vbUp(e){
+ vbPts.delete(e.pointerId);
+ if(!vbPts.size||(vbDrag&&vbDrag.m==='pz'&&vbPts.size<2))vbDrag=null;
+}
+function vbAdd(){
+ const s=curSlide();if(!s||P.playing)return;s.vb=s.vb||[];
+ if(s.vb.length>=4){toast().textContent='每頁最多 4 個視角方塊。';return}
+ const b={x:.62,y:.06,w:.34,h:.22,bw:.004,rad:.02,c:'#ffffff',cam:{az:0,el:1.2,d:V.d,t:[V.t.x,V.t.y,V.t.z]}};
+ s.vb.push(b);vbReload();vbSelect(b);glThumb();
+}
+function vbDel(){
+ const s=curSlide(),b=vbSel;if(!s||!b)return;
+ s.vb=(s.vb||[]).filter(x=>x!==b);vbSel=null;vbEdit=false;vbReload();dash();render();glThumb();
+}
+$('#vbb').onclick=()=>{vbAdd();$('#fab').classList.remove('open')};
+$('#vbdel').onclick=vbDel;$('#vbclose').onclick=()=>vbSelect(null);
+$('#vbedit').onclick=()=>{if(!vbSel)return;vbEdit=!vbEdit;[...vbL.children].forEach(c=>c.classList.toggle('ev',c._b===vbSel&&vbEdit));vbSync()};
+$('#vbcopy').onclick=()=>vbChange(b=>{b.cam={az:V.az,el:V.el,d:V.d,t:[V.t.x,V.t.y,V.t.z]}});
+$('#vbwr').addEventListener('input',e=>vbChange(b=>b.bw=clamp(+e.target.value,0,10)/100));
+$('#vbw').addEventListener('input',e=>{const v=parseFloat(e.target.value);if(isFinite(v)&&v>=0)vbChange(b=>b.bw=clamp(v,0,10)/100)});
+$('#vbrr').addEventListener('input',e=>vbChange(b=>b.rad=clamp(+e.target.value,0,50)/100));
+$('#vbr').addEventListener('input',e=>{const v=parseFloat(e.target.value);if(isFinite(v)&&v>=0)vbChange(b=>b.rad=clamp(v,0,50)/100)});
+armSlider($('#vbwr'),()=>0.4);armSlider($('#vbrr'),()=>2);
+const vbS=[...document.querySelectorAll('#vbpop input')];
+function vbPaint(){
+ const[h,s2,l]=vbHSL,g=(i,v)=>vbS[i].style.setProperty('--g',v);
+ vbS.forEach((x,i)=>x.value=vbHSL[i]);
+ g(0,'linear-gradient(90deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)');
+ g(1,'linear-gradient(90deg,hsl('+h+',0%,'+l+'%),hsl('+h+',100%,'+l+'%))');
+ g(2,'linear-gradient(90deg,#000,hsl('+h+','+s2+'%,50%),#fff)');
+}
+$('#vbc').onclick=()=>{
+ const b=vbSel;if(!b)return;const D=$('#dview');
+ if(D.classList.contains('cp')){D.classList.remove('cp');return}
+ vbHSL=hex2hsl(b.c);D.classList.add('cp');vbPaint();
+};
+vbS.forEach((x,i)=>x.addEventListener('input',()=>{
+ if(!vbHSL||!vbSel)return;vbHSL[i]=+x.value;vbPaint();
+ vbChange(b=>b.c=hsl2hex(vbHSL[0],vbHSL[1],vbHSL[2]));
+}));
+dom.addEventListener('pointerdown',()=>{if(!P.playing&&vbSel)vbSelect(null)});
+new ResizeObserver(()=>{[...vbL.children].forEach(el=>vbApplyEl(el,el._b))}).observe(stg);
+addEventListener('keydown',e=>{
+ if(P.playing||!vbSel)return;const a=document.activeElement;if(a&&(/INPUT|TEXTAREA/.test(a.tagName)||a.isContentEditable))return;
+ if(e.key==='Escape'){if(vbEdit){vbEdit=false;vbSelect(vbSel)}else vbSelect(null)}
+ else if(e.key==='Delete'||e.key==='Backspace')vbDel();
+});
 // ---------- 復原 / 重做（只記錄被改動的參數） ----------
 const Hm={u:[],r:[]};
 const IDS=new WeakMap();let idn=0;const idOf=o=>{let i=IDS.get(o);if(!i){i=++idn;IDS.set(o,i)}return i};
@@ -1784,15 +2080,16 @@ function uCollect(){
   lists.TL=(slide.tb||[]).slice();lists.GL=(slide.gl||[]).slice();
   lists.TL.forEach(o=>UTF.forEach(f=>put('T'+idOf(o)+':'+f,o[f],{t:'T',o,f})));
   lists.GL.forEach(o=>UGF.forEach(f=>put('G'+idOf(o)+':'+f,o[f],{t:'G',o,f})));
+  lists.VL=(slide.vb||[]).slice();lists.VL.forEach(o=>UVF.forEach(f=>put('V'+idOf(o)+':'+f,vget(o,f),{t:'V',o,f})));
  }}
- v.set('TL',(lists.TL||[]).map(idOf).join());v.set('GL',(lists.GL||[]).map(idOf).join());
+ v.set('TL',(lists.TL||[]).map(idOf).join());v.set('GL',(lists.GL||[]).map(idOf).join());v.set('VL',(lists.VL||[]).map(idOf).join());
  return{v,d,lists,slide,snap:{l:S.lenses.map(l=>({x:l.x,f:l.f,D:l.D,E:l.E})),ld:LD.map(c=>c?{...c}:c)}};
 }
 function uSame(a,b){if(a.v.size!==b.v.size)return false;for(const[k,x]of a.v){if(!b.v.has(k)||b.v.get(k)!==x)return false}return true}
 function uDiff(a,b){
  const items=[],lc=a.v.get('LN')!==b.v.get('LN');
  b.v.forEach((val,k)=>{
-  if(k==='LN'||k==='TL'||k==='GL'||!a.v.has(k))return;
+  if(k==='LN'||k==='TL'||k==='GL'||k==='VL'||!a.v.has(k))return;
   if(lc&&k[0]==='L')return;
   const o=a.v.get(k);if(o===val)return;
   items.push({...b.d.get(k),old:o,new:val});
@@ -1800,6 +2097,7 @@ function uDiff(a,b){
  if(lc)items.push({t:'LL',old:a.snap,new:b.snap});
  if(a.v.get('TL')!==b.v.get('TL'))items.push({t:'TL',old:a.lists.TL||[],new:b.lists.TL||[]});
  if(a.v.get('GL')!==b.v.get('GL'))items.push({t:'GL',old:a.lists.GL||[],new:b.lists.GL||[]});
+ if(a.v.get('VL')!==b.v.get('VL'))items.push({t:'VL',old:a.lists.VL||[],new:b.lists.VL||[]});
  return items;
 }
 function uBtns(){const h=uH();$('#uundo').disabled=!h.u.length;$('#uredo').disabled=!h.r.length}
@@ -1829,6 +2127,8 @@ function uApply(items,useNew){
    case'G':it.o[it.f]=val;tb=true;break;
    case'TL':{const s=curSlide();if(s)s.tb=val.slice();tb=true;break}
    case'GL':{const s=curSlide();if(s)s.gl=val.slice();tb=true;break}
+   case'V':vset(it.o,it.f,val);tb=true;break;
+   case'VL':{const s=curSlide();if(s)s.vb=val.slice();tb=true;break}
   }
  });
  if(lens){S.sel=null;buildMeshes()}
@@ -1845,6 +2145,8 @@ function uName(it){
   case'G':return'Glow '+(UGN[it.f]||it.f);
   case'TL':return'文字方塊增減';
   case'GL':return'Glow 增減';
+  case'V':return'視角方塊 '+(UVN[it.f]||it.f);
+  case'VL':return'視角方塊增減';
  }
  return'';
 }
