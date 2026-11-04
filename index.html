@@ -28,6 +28,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--
 #omenu button.act{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff}
 #toast{position:absolute;right:14px;top:62px;max-width:min(68%,340px);padding:10px 14px;border-radius:14px;font-size:12px;opacity:0;transform:translateY(-6px);transition:.25s;pointer-events:none}
 #toast.show{opacity:1;transform:none}
+#tl{position:absolute;left:14px;top:14px;display:flex;flex-direction:column;gap:8px;align-items:flex-start;max-width:calc(100% - 180px);z-index:3;pointer-events:none}#tl>*{pointer-events:auto}#tl #hud{position:static;max-width:none}#ur{display:flex;gap:8px}#ur .rb{width:36px;height:36px}#ur .rb svg{width:18px;height:18px}.rb:disabled{opacity:.35;pointer-events:none}#app.play #tl{display:none!important}
 #hud{position:absolute;left:14px;top:14px;display:flex;flex-wrap:wrap;gap:6px;max-width:calc(100% - 180px)}
 .chip{padding:5px 11px;border-radius:999px;font-size:11px;color:var(--mut)}
 .chip b{color:var(--tx);font-weight:600;margin-left:4px}.chip b.ok{color:#22c55e}.chip b.bad{color:#f43f5e}
@@ -255,12 +256,13 @@ input[type=range]{touch-action:pan-y}
  <button id="auto"><svg viewBox="0 0 24 24" aria-hidden="true" class="ic"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>自動調整</button>
  <button class="rb glass" id="pexit" title="結束播放 (Esc)"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
  <div id="toast" class="glass"></div>
- <div id="hud">
+ <div id="tl"><div id="ur"><button class="rb glass" id="uundo" title="復原 (Ctrl+Z)" disabled><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button><button class="rb glass" id="uredo" title="重做 (Ctrl+Shift+Z)" disabled><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5M20 9H10a6 6 0 0 0 0 12h3"/></svg></button></div><div id="hud">
   <div class="chip glass">EFL<b id="h_efl">—</b></div><div class="chip glass">焦點<b id="h_f">—</b></div>
   <div class="chip glass">模糊<b id="h_blur">—</b></div><div class="chip glass">通光<b id="h_q">—</b></div>
- </div>
+ </div></div>
  <div id="set" class="glass">
   <button class="btn" id="pmb"><svg viewBox="0 0 24 24" aria-hidden="true" class="ic"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>簡報模式</button>
+  <div style="grid-column:1/-1;display:flex;gap:8px"><button class="btn" id="psave" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px"><svg viewBox="0 0 24 24" aria-hidden="true" class="ic"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>儲存專案</button><button class="btn" id="pload" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px"><svg viewBox="0 0 24 24" aria-hidden="true" class="ic"><path d="M12 16V5M7 9l5-5 5 5M5 20h14"/></svg>導入專案</button><input type="file" id="pfile" accept=".zip,application/zip" style="display:none"></div>
   <div id="ratw" style="display:none"><span>簡報比例</span><div class="dd"><button class="btn" id="ratb"><span>16:9</span><span>▾</span></button><div class="ddl glass" id="ratl"><button class="fi act" data-v="16:9">16:9</button><button class="fi" data-v="16:10">16:10</button><button class="fi" data-v="4:3">4:3</button><button class="fi" data-v="21:9">21:9</button><button class="fi" data-v="1:1">1:1</button><button class="fi" data-v="9:16">9:16（直式）</button></div></div></div>
   <h4>玻璃材質（所有鏡片共用）</h4>
   <div class="gs"><label><span>折射率 IOR</span><b id="v_ior"></b></label><input type="range" id="ior" min="1.05" max="2.3" step="0.01"></div>
@@ -284,6 +286,7 @@ input[type=range]{touch-action:pan-y}
   <label>自動調整：左邊界<input type="number" id="lo" value="0"></label>
   <label>最低通光量 (%)<input type="number" id="qmin" value="50" min="1" max="100"></label>
   <label style="flex-direction:row;align-items:center;gap:8px;grid-column:1/-1"><input type="checkbox" id="fitobj" style="width:auto">物體須完整落在屏幕內（取消則放大到極限）</label>
+  <label style="flex-direction:row;align-items:center;gap:8px;grid-column:1/-1"><input type="checkbox" id="hudon" checked style="width:auto">顯示左上角資訊（EFL／焦點／模糊／通光）</label>
   <button class="btn" id="ssel">選取屏幕（顯示移動箭頭）</button>
   <button class="btn" id="af2">屏幕移到焦點</button>
  </div>
@@ -327,6 +330,7 @@ input[type=range]{touch-action:pan-y}
 </div></section>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
 const $=s=>document.querySelector(s);
 const COL=[0x2563eb,0x16a34a,0x9333ea,0xdb2777,0x0891b2,0xca8a04];
@@ -469,14 +473,22 @@ function updDims(){
  const arr=[];
  segs.forEach(([a,b,nm],i)=>{
   arr.push(a,yD,0,b,yD,0,a,yD-5,0,a,yD+5,0,b,yD-5,0,b,yD+5,0);
-  const el=document.createElement('div');el.className='dl glass';el.style.opacity=aD;el.textContent=nm+' '+Math.abs(b-a).toFixed(1)+' mm';box.appendChild(el);
+  const el=document.createElement('div');el.className='dl glass';el.style.opacity=aD;el.textContent=Math.abs(b-a).toFixed(1)+' mm';box.appendChild(el);
   dimPts.push({el,off:-16-(i%2)*24,p:new THREE.Vector3((a+b)/2,yD,0)});
  });
  setLines(dimL,arr);
 }
 function placeDims(){
- const w=stg.clientWidth,h=stg.clientHeight;
- dimPts.forEach(({el,p,off})=>{const v=p.clone().project(camera);el.style.display=v.z<1?'':'none';el.style.left=((v.x*.5+.5)*w)+'px';el.style.top=((-v.y*.5+.5)*h+off)+'px'});
+ const w=stg.clientWidth,h=stg.clientHeight,items=[];
+ dimPts.forEach(d=>{const v=d.p.clone().project(camera),vis=v.z<1;d.el.style.display=vis?'':'none';if(vis){d.sx=(v.x*.5+.5)*w;d.sy=(-v.y*.5+.5)*h;items.push(d)}});
+ items.sort((a,b)=>a.sx-b.sx);
+ const rows=[];
+ items.forEach(d=>{
+  const hw=d.el.offsetWidth/2;let L=0;
+  for(;;L++){const row=rows[L]||(rows[L]=[]);if(!row.some(o=>Math.abs(o.sx-d.sx)<o.hw+hw+6))break}
+  rows[L].push({sx:d.sx,hw});
+  d.el.style.left=d.sx+'px';d.el.style.top=(d.sy-16-L*24)+'px';
+ });
 }
 function faceTex(c,txt){
  const k=document.createElement('canvas');k.width=k.height=128;const g=k.getContext('2d');
@@ -949,7 +961,7 @@ $('#hfile').onchange=e=>{
  const f=e.target.files[0];if(!f)return;const fr=new FileReader();
  fr.onload=()=>{const im=new Image();im.onload=()=>{
   const x=new THREE.Texture(im);x.minFilter=x.magFilter=THREE.LinearFilter;x.generateMipmaps=false;x.wrapS=THREE.RepeatWrapping;x.needsUpdate=true;
-  HD.custom=x;S.hd='custom';G.env.value=x;document.querySelectorAll('#hd .btn').forEach(b=>b.classList.toggle('act',b.id=='hup'));update();
+  HD.custom=x;HDFILE={blob:f,name:f.name};S.hd='custom';G.env.value=x;document.querySelectorAll('#hd .btn').forEach(b=>b.classList.toggle('act',b.id=='hup'));update();
  };im.src=fr.result};
  fr.readAsDataURL(f);e.target.value='';
 };
@@ -1246,7 +1258,7 @@ function loadFont(n){
 }
 async function addUserFont(f){
  let fam=f.name.replace(/\.[^.]+$/,'').replace(/["'\\]/g,'').trim()||'MyFont',k=fam,i=2;while(UF.includes(fam)||GF.some(x=>x[0]===fam))fam=k+' '+(i++);
- const face=new FontFace(fam,await f.arrayBuffer());await face.load();document.fonts.add(face);UF.push(fam);return fam;
+ const buf=await f.arrayBuffer();const face=new FontFace(fam,buf.slice(0));await face.load();document.fonts.add(face);UF.push(fam);UFILES[fam]={name:f.name,buf};return fam;
 }
 function tbFont(el,t,box){
  const fb=el.querySelector('.fbtn'),fp=el.querySelector('.fpop');
@@ -1689,6 +1701,191 @@ $('#phold').addEventListener('input',()=>{const s=curSlide();if(s)s.hold=Math.ma
 $('#osz').addEventListener('input',e=>{const v=parseFloat(e.target.value);if(isFinite(v)&&v>0){CUBE.s=v;update()}});
 $('#oszr').addEventListener('input',e=>{CUBE.s=parseFloat(e.target.value);update()});armSlider($('#oszr'),()=>110);
 $('#oglow').onclick=()=>{S.glow=!S.glow;update()};$('#dtclose').onclick=()=>tbSelect(null);
+// ---------- 專案 儲存 / 導入 (zip) ----------
+let HDFILE=null;const UFILES={};
+const extOf=(n,d)=>{const m=/\.([A-Za-z0-9]+)$/.exec(n||'');return m?'.'+m[1].toLowerCase():d};
+async function projSave(){
+ try{
+  if(typeof JSZip==='undefined')throw new Error('JSZip 未載入，請確認網路');
+  if(P.playing)pStop();
+  pSave();const cs=curSlide();if(P.on&&cs&&!cs.lock)cs.cam=cam0();
+  const zip=new JSZip();
+  const pr={app:'convex-lens-sim',version:1,hudOn:$('#hudon').checked,S:snap(),hd:S.hd,pon:P.on,cur:P.cur,view:cam0(),
+   ratioV:($('#ratl .fi.act')||{dataset:{v:'16:9'}}).dataset.v,ptrans:parseFloat($('#ptrans').value)||1.6,
+   auto:{gmin:$('#gmin').value,lo:$('#lo').value,qmin:$('#qmin').value,fitobj:$('#fitobj').checked},
+   slides:P.slides.map(x=>({st:x.st,cam:x.cam,lock:!!x.lock,thumb:x.thumb||null,tb:x.tb||[],gl:x.gl||[],auto:!!x.auto,hold:x.hold||3})),
+   fonts:[],hdri:null};
+  UF.forEach((fam,i)=>{const u=UFILES[fam];if(!u)return;const fn='assets/fonts/font'+(i+1)+extOf(u.name,'.ttf');zip.file(fn,u.buf);pr.fonts.push({family:fam,file:fn,name:u.name})});
+  if(HDFILE){const fn='assets/hdri'+extOf(HDFILE.name,'.png');zip.file(fn,HDFILE.blob);pr.hdri=fn}
+  zip.file('project.json',JSON.stringify(pr));
+  const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='convex-lens-project.zip';
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  toast().textContent='已儲存專案（zip）。';
+ }catch(e){toast().textContent='儲存失敗：'+e.message}
+}
+async function projLoad(file){
+ try{
+  if(typeof JSZip==='undefined')throw new Error('JSZip 未載入，請確認網路');
+  const zip=await JSZip.loadAsync(file),jf=zip.file('project.json');
+  if(!jf)throw new Error('找不到 project.json');
+  const pr=JSON.parse(await jf.async('string'));
+  if(pr.app!=='convex-lens-sim'||!pr.S||!Array.isArray(pr.S.lenses))throw new Error('不是有效的專案檔');
+  if(P.playing)pStop();
+  for(const f of pr.fonts||[]){
+   const zf=zip.file(f.file);if(!zf||UF.includes(f.family))continue;
+   const buf=await zf.async('arraybuffer'),face=new FontFace(f.family,buf.slice(0));await face.load();document.fonts.add(face);UF.push(f.family);UFILES[f.family]={name:f.name||f.file,buf};
+  }
+  if(pr.hdri&&zip.file(pr.hdri)){
+   const blob=await zip.file(pr.hdri).async('blob');
+   HD.custom=await new Promise((res,rej)=>{const im=new Image();im.onload=()=>{const x=new THREE.Texture(im);x.minFilter=x.magFilter=THREE.LinearFilter;x.generateMipmaps=false;x.wrapS=THREE.RepeatWrapping;x.needsUpdate=true;res(x)};im.onerror=()=>rej(new Error('HDRI 圖片無法讀取'));im.src=URL.createObjectURL(blob)});
+   HDFILE={blob,name:pr.hdri};
+  }
+  if(P.on)pToggle(false);
+  tbSelect(null);glSelect(null);
+  S.hd=(pr.hd==='custom'&&HD.custom)?'custom':'hall';
+  G.env.value=S.hd==='custom'?HD.custom:(HD.hall||G.env.value);
+  document.querySelectorAll('#hd .btn').forEach(b=>b.classList.toggle('act',S.hd==='custom'?b.id==='hup':b.dataset.h===S.hd));
+  LD.length=0;
+  const A=pr.auto||{};['gmin','lo','qmin'].forEach(k=>{if(A[k]!=null)$('#'+k).value=A[k]});if(A.fitobj!=null)$('#fitobj').checked=!!A.fitobj;
+  if(pr.ptrans)$('#ptrans').value=pr.ptrans;if(pr.hudOn!=null){$('#hudon').checked=!!pr.hudOn;$('#hudon').onchange()}
+  const rb=[...$('#ratl').querySelectorAll('.fi')].find(b=>b.dataset.v===pr.ratioV);if(rb)rb.click();
+  P.slides=(pr.slides||[]).map(x=>({st:x.st,cam:x.cam,lock:!!x.lock,thumb:x.thumb||null,tb:x.tb||[],gl:x.gl||[],auto:!!x.auto,hold:x.hold||3}));
+  P.cur=P.slides.length?clamp(pr.cur|0,0,P.slides.length-1):0;
+  applySt(pr.S);capD();
+  if(pr.pon&&P.slides.length)pToggle(true);
+  else{if(pr.view)setCam(pr.view);update();render()}
+  $('#set').classList.remove('on');
+  uResetAll();toast().textContent='已導入專案。';
+ }catch(e){toast().textContent='導入失敗：'+e.message}
+}
+$('#psave').onclick=projSave;
+$('#pload').onclick=()=>$('#pfile').click();
+$('#pfile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)projLoad(f)};
+// ---------- 復原 / 重做（只記錄被改動的參數） ----------
+const Hm={u:[],r:[]};
+const IDS=new WeakMap();let idn=0;const idOf=o=>{let i=IDS.get(o);if(!i){i=++idn;IDS.set(o,i)}return i};
+const UGK=['screen','beam','N','ang','n','disp','exp','rot','fres','otype','ssz','dims','hideLens','noRays','glow'];
+const ULF=['x','f','D','E'],UTF=['x','y','w','h','fs','c','text','b','i','ls','lh','al','r','ff'],UGF=['x','y','r','a','c0','c1'];
+const UN={x:'位置',f:'焦距 f',D:'口徑',E:'邊緣厚度',screen:'屏幕位置',beam:'光束直徑',N:'每面光線數',ang:'入射角',n:'折射率',disp:'色散',exp:'HDRI 亮度',rot:'HDRI 旋轉',fres:'菲涅爾',otype:'物體類型',ssz:'屏幕尺寸',dims:'顯示間距',hideLens:'隱藏鏡片',noRays:'隱藏光線',glow:'發光'};
+const UTN={x:'X',y:'Y',w:'寬度',h:'高度',fs:'字級',c:'顏色',text:'內容',b:'粗體',i:'斜體',ls:'字距',lh:'行距',al:'對齊',r:'旋轉',ff:'字體'};
+const UGN={x:'X',y:'Y',r:'大小',a:'強度',c0:'中心顏色',c1:'外圍顏色'};
+let uBase=null,uPrev=null,uPl=false;const uDown=new Set();
+const uH=()=>{const s=P.on&&curSlide();return s?(s.h||(s.h={u:[],r:[]})):Hm};
+function uCollect(){
+ const v=new Map(),d=new Map(),lists={};
+ const put=(k,val,ds)=>{v.set(k,val);d.set(k,ds)};
+ UGK.forEach(f=>put('S:'+f,S[f],{t:'S',f}));
+ put('C:x',CUBE.x,{t:'C',f:'x'});put('C:s',CUBE.s,{t:'C',f:'s'});
+ v.set('LN',S.lenses.length);
+ S.lenses.forEach((l,i)=>ULF.forEach(f=>put('L'+i+':'+f,l[f],{t:'L',i,f})));
+ let slide=null;
+ if(P.on){slide=curSlide()||null;if(slide){
+  lists.TL=(slide.tb||[]).slice();lists.GL=(slide.gl||[]).slice();
+  lists.TL.forEach(o=>UTF.forEach(f=>put('T'+idOf(o)+':'+f,o[f],{t:'T',o,f})));
+  lists.GL.forEach(o=>UGF.forEach(f=>put('G'+idOf(o)+':'+f,o[f],{t:'G',o,f})));
+ }}
+ v.set('TL',(lists.TL||[]).map(idOf).join());v.set('GL',(lists.GL||[]).map(idOf).join());
+ return{v,d,lists,slide,snap:{l:S.lenses.map(l=>({x:l.x,f:l.f,D:l.D,E:l.E})),ld:LD.map(c=>c?{...c}:c)}};
+}
+function uSame(a,b){if(a.v.size!==b.v.size)return false;for(const[k,x]of a.v){if(!b.v.has(k)||b.v.get(k)!==x)return false}return true}
+function uDiff(a,b){
+ const items=[],lc=a.v.get('LN')!==b.v.get('LN');
+ b.v.forEach((val,k)=>{
+  if(k==='LN'||k==='TL'||k==='GL'||!a.v.has(k))return;
+  if(lc&&k[0]==='L')return;
+  const o=a.v.get(k);if(o===val)return;
+  items.push({...b.d.get(k),old:o,new:val});
+ });
+ if(lc)items.push({t:'LL',old:a.snap,new:b.snap});
+ if(a.v.get('TL')!==b.v.get('TL'))items.push({t:'TL',old:a.lists.TL||[],new:b.lists.TL||[]});
+ if(a.v.get('GL')!==b.v.get('GL'))items.push({t:'GL',old:a.lists.GL||[],new:b.lists.GL||[]});
+ return items;
+}
+function uBtns(){const h=uH();$('#uundo').disabled=!h.u.length;$('#uredo').disabled=!h.r.length}
+function uRebase(c){uBase=c||uCollect();uPrev=null;uBtns()}
+function uCommit(cur){
+ const items=uDiff(uBase,cur);
+ if(items.length){const h=uH();h.u.push({items});if(h.u.length>300)h.u.shift();h.r.length=0}
+ uRebase(cur);
+}
+function uFlushNow(){
+ if(P.playing||uPl)return;
+ const cur=uCollect();
+ if(!uBase||cur.slide!==uBase.slide){uRebase(cur);return}
+ if(!uSame(cur,uBase))uCommit(cur);
+}
+function uResetAll(){Hm.u.length=Hm.r.length=0;P.slides.forEach(s=>{delete s.h});uRebase()}
+function uApply(items,useNew){
+ let tb=false,lens=false;
+ (useNew?items:items.slice().reverse()).forEach(it=>{
+  const val=useNew?it.new:it.old;
+  switch(it.t){
+   case'S':S[it.f]=val;break;
+   case'C':CUBE[it.f]=val;break;
+   case'L':{const l=S.lenses[it.i];if(l)l[it.f]=val;break}
+   case'LL':S.lenses=val.l.map(c=>({...c}));LD.length=0;val.ld.forEach(c=>LD.push(c?{...c}:c));lens=true;break;
+   case'T':it.o[it.f]=val;if(it.f==='c')delete it.o.hsl;tb=true;break;
+   case'G':it.o[it.f]=val;tb=true;break;
+   case'TL':{const s=curSlide();if(s)s.tb=val.slice();tb=true;break}
+   case'GL':{const s=curSlide();if(s)s.gl=val.slice();tb=true;break}
+  }
+ });
+ if(lens){S.sel=null;buildMeshes()}
+ syncUI();update();
+ if(tb)tbRender();
+}
+function uName(it){
+ switch(it.t){
+  case'S':return UN[it.f]||it.f;
+  case'C':return it.f==='x'?'物體位置':'物體大小';
+  case'L':return'L'+(it.i+1)+' '+(UN[it.f]||it.f);
+  case'LL':return'鏡片數量';
+  case'T':return'文字方塊 '+(UTN[it.f]||it.f);
+  case'G':return'Glow '+(UGN[it.f]||it.f);
+  case'TL':return'文字方塊增減';
+  case'GL':return'Glow 增減';
+ }
+ return'';
+}
+function uToast(pre,e){
+ const nm=[...new Set(e.items.map(uName))],t=nm.slice(0,3).join('、')+(nm.length>3?'…':'');
+ toast().textContent=pre+'：'+t;
+}
+function uUndo(){
+ if(P.playing)return;uFlushNow();
+ const h=uH(),e=h.u.pop();if(!e){uBtns();return}
+ uApply(e.items,false);h.r.push(e);uRebase();uToast('復原',e);
+}
+function uRedo(){
+ if(P.playing)return;uFlushNow();
+ const h=uH(),e=h.r.pop();if(!e){uBtns();return}
+ uApply(e.items,true);h.u.push(e);uRebase();uToast('重做',e);
+}
+$('#uundo').onclick=uUndo;$('#uredo').onclick=uRedo;
+addEventListener('pointerdown',e=>uDown.add(e.pointerId),true);
+['pointerup','pointercancel'].forEach(t=>addEventListener(t,e=>uDown.delete(e.pointerId),true));
+addEventListener('blur',()=>uDown.clear());
+setInterval(()=>{
+ if(P.playing){uPl=true;return}
+ const cur=uCollect();
+ if(!uBase||cur.slide!==uBase.slide){uRebase(cur);return}
+ if(uSame(cur,uBase)){uPrev=null;return}
+ if(uDown.size){uPrev=null;return}
+ if(uPrev&&uSame(cur,uPrev))uCommit(cur);else uPrev=cur;
+},150);
+{const _g=pGo;pGo=function(i){if(uPl)uPl=false;else uFlushNow();_g(i);uRebase()};
+ const _t=pToggle;pToggle=function(on){uFlushNow();_t(on);uRebase()};
+ const _p=pPlay;pPlay=function(){uFlushNow();_p();uPl=P.playing};$('#pplay').onclick=pPlay}
+addEventListener('keydown',e=>{
+ if(P.playing||!(e.ctrlKey||e.metaKey))return;
+ const a=document.activeElement;
+ if(a&&(a.isContentEditable||(/INPUT|TEXTAREA|SELECT/.test(a.tagName)&&a.type!=='range'&&a.type!=='checkbox')))return;
+ const k=e.key.toLowerCase();
+ if(k==='z'){e.preventDefault();e.shiftKey?uRedo():uUndo()}else if(k==='y'){e.preventDefault();uRedo()}
+});
+// ---------- 左上角資訊開關 ----------
+$('#hudon').onchange=()=>{$('#hud').style.display=$('#hudon').checked?'':'none'};
 build();resize();$('#auto').click();T.classList.remove('show');clearTimeout(tm);{const l0=sorted()[0];if(l0)CUBE.x=l0.x-70-(S.otype==='cube'?CUBE.s/2:0)}$('#fit').click();update();
 </script>
 </body>
