@@ -13,8 +13,8 @@
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font:13px/1.45 Inter,system-ui,-apple-system,"Noto Sans TC","PingFang TC",sans-serif;-webkit-font-smoothing:antialiased}
-#app{height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));display:grid;grid-template-rows:1fr 0fr;transition:grid-template-rows .4s cubic-bezier(.2,.8,.2,1)}
-#app.open{grid-template-rows:3fr 1fr}
+#app{height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));display:grid;grid-template-rows:1fr 0px;transition:grid-template-rows .4s cubic-bezier(.2,.8,.2,1)}
+#app.open{grid-template-rows:1fr var(--dh,26%)}
 #vp{position:relative;min-height:0;overflow:hidden;background:radial-gradient(900px 500px at 15% -10%,var(--bg2),transparent 70%),radial-gradient(var(--dot) 1px,transparent 1px) 0 0/24px 24px,var(--bg);-webkit-tap-highlight-color:transparent;}
 #vp canvas.m{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
 .glass{background:var(--glass);border:1px solid var(--bd);backdrop-filter:blur(18px) saturate(1.5);-webkit-backdrop-filter:blur(18px) saturate(1.5);box-shadow:var(--sh)}
@@ -75,13 +75,13 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 .tm{display:flex;align-items:center;gap:4px;color:var(--mut);font-size:11px}.tm .num{width:38px}
 .btn.pri{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border-color:transparent}
 #pplay{display:flex;align-items:center;gap:6px}
-#strip{display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;flex:1;min-height:64px;padding:3px 3px 6px}
+#strip{display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;flex:1;min-height:92px;padding:3px 3px 6px}
 .sd{position:relative;flex:0 0 auto;align-self:stretch;min-height:0;aspect-ratio:16/9;border:1px solid var(--bd);border-radius:10px;overflow:hidden;background:var(--bg2);cursor:pointer}
 .sd img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.sd img:not([src]){visibility:hidden}
 .sd.cur{outline:2px solid var(--acc);outline-offset:1px}
 .sd .sn{position:absolute;left:6px;top:5px;background:rgba(0,0,0,.55);color:#fff;font:600 10px Inter,sans-serif;padding:1px 7px;border-radius:999px}
-.sd .sx{position:absolute;right:5px;top:4px;width:20px;height:20px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;cursor:pointer;line-height:1;padding:0;display:none;font-size:13px}
-.sd.cur .sx,.sd:hover .sx{display:block}
+.sd .sm{position:absolute;right:5px;top:4px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;cursor:pointer;padding:0;display:none;place-items:center}.sd .sm svg{width:14px;height:14px;fill:#fff}
+.sd.cur .sm,.sd:hover .sm{display:grid}
 .sd .slk{position:absolute;right:6px;bottom:5px;display:grid;background:rgba(0,0,0,.55);border-radius:999px;padding:3px}
 .sd .slk svg{width:11px;height:11px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .sd.addc{display:grid;place-items:center;border-style:dashed;color:var(--mut);font-size:28px;aspect-ratio:auto;width:84px;background:transparent}
@@ -94,15 +94,15 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 #app.play #vp{cursor:pointer}
 .tm input[type=checkbox]{width:auto;margin:0}
 
-#vp{background:#000}#stage{position:absolute;left:0;top:0;width:100%;height:100%;background:radial-gradient(900px 500px at 15% -10%,var(--bg2),transparent 70%),radial-gradient(var(--dot) 1px,transparent 1px) 0 0/24px 24px,var(--bg)}
+#vp{background:#000}#stage{position:absolute;left:0;top:0;width:100%;height:100%;background:#000}
 #ratw{grid-column:1/-1}#ratw select{width:100%;padding:7px 9px;border-radius:9px;border:1px solid var(--bd);background:transparent;color:var(--tx);font:500 13px Inter,sans-serif}#ratw option{color:#000}
-#tools,#hud,#auto,#lockb,#fab,#toast,#pbar{z-index:3}#set{z-index:4}
+#tools,#hud,#auto,#lockb,#fab,#toast,#pbar{z-index:3}#set{z-index:6}
 #fab{position:absolute;left:14px;bottom:14px;display:none}#app.pm #fab{display:block}#app.play #fab{display:none!important}
 #fabl{position:absolute;left:0;bottom:48px;display:flex;flex-direction:column;gap:8px}
 #fabl .rb{opacity:0;transform:translateY(10px) scale(.8);transition:opacity .2s,transform .2s;pointer-events:none}
 #fab.open #fabl .rb{opacity:1;transform:none;pointer-events:auto}
 #fabm svg{transition:transform .2s}#fab.open #fabm svg{transform:rotate(45deg)}
-#tbl{position:absolute;inset:0;z-index:2;pointer-events:none}#app.play #tbl{overflow:hidden}
+#tbl{position:absolute;inset:0;z-index:5;pointer-events:none}#app.play #tbl{overflow:hidden}
 #tbA,#tbB{position:absolute;inset:0;pointer-events:none}
 .tb{position:absolute;pointer-events:auto;box-sizing:border-box;cursor:move;touch-action:auto;display:flex;flex-direction:column;line-height:1.35;user-select:none;-webkit-user-select:none}
 #app.play .tb{pointer-events:none}
@@ -132,7 +132,8 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 .fi{border:0;background:transparent;color:var(--tx);text-align:left;padding:6px 8px;border-radius:8px;font-size:15px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:none}
 .fi.act{background:var(--acc);color:#fff}.fup{flex:none}
 #ratw{display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--mut)}.dd{position:relative}
-#set #ratb{display:flex;justify-content:space-between;align-items:center;padding:8px 10px}
+#set #ratb{display:flex;justify-content:space-between;align-items:center;width:100%;min-width:100%;padding:11px 16px;font-size:14px}
+#ratw .dd{width:100%}
 .ddl{display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:6;padding:4px;border-radius:12px;flex-direction:column;background:var(--bg)}.dd.open .ddl{display:flex}
 .spbtn{width:30px;height:28px;padding:0!important;display:grid;place-items:center}.spbtn.act{background:var(--acc);color:#fff;border-color:var(--acc)}
 .spop{display:none;position:absolute;left:0;top:calc(100% + 8px);width:230px;padding:10px 12px;border-radius:14px;flex-direction:column;gap:9px;font-size:11px;color:var(--mut);background:var(--bg)}
@@ -192,6 +193,58 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 .rot::after{inset:calc(-10px*var(--uz,1))}
 .tbt{top:calc(-80px*var(--uz,1))}.tb.low .tbt{top:auto;bottom:calc(-46px*var(--uz,1))}
 .osl label{display:flex;justify-content:space-between;align-items:baseline;color:var(--mut);font-size:11px;margin-bottom:6px}.osl{display:flex;flex-direction:column}#dobj .grid{margin-top:4px}
+
+/* 文字工具列 → dashboard */
+#dtext{flex-direction:column;gap:10px}
+#dtext .tbt{position:static;left:auto;top:auto!important;bottom:auto!important;transform:none!important;display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:0;border:0;border-radius:0;background:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;white-space:normal}
+#dtext .cbtn{width:34px;height:34px}
+#dtext .tbs,#dtext .fbtn,#dtext .spbtn,#dtext .albtn{width:40px;height:34px}
+#dtext .tbt .btn.tbd{width:40px;height:34px}
+#dtext .cpop,#dtext .fpop,#dtext .spop,#dtext .apop{position:static;display:none;flex:1 1 100%;width:100%;max-width:460px;left:auto;top:auto!important;bottom:auto!important}
+#dtext.cp .cpop,#dtext.fp .fpop,#dtext.sp .spop,#dtext.ap .apop{display:flex}
+#dtext .apop{max-width:180px}
+#dtext .fl{max-height:140px}
+#gll{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.gl{position:absolute;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none}
+#tbG{position:absolute;inset:0;pointer-events:none}
+#app.play #tbG,#app:not(.pm) #tbG{display:none}
+.glh{position:absolute;pointer-events:auto;width:calc(22px*var(--uz,1));height:calc(22px*var(--uz,1));margin:calc(-11px*var(--uz,1)) 0 0 calc(-11px*var(--uz,1));border-radius:50%;background:#fff;border:calc(2px*var(--uz,1)) solid var(--acc);box-shadow:0 1px 6px rgba(0,0,0,.5);touch-action:none;cursor:move}
+.glh::after{content:"";position:absolute;inset:calc(-12px*var(--uz,1))}
+.glh.sel{background:var(--acc);border-color:#fff}
+.gcol{width:100%;height:38px;border:1px solid var(--bd);border-radius:10px;padding:2px;background:transparent;cursor:pointer}
+#gprev{height:10px;border-radius:6px;border:1px solid var(--bd)}
+#dglow .gcr{display:flex;align-items:center;gap:10px}#dglow #gprev{flex:1}
+#dglow .cbtn{width:36px;height:36px}.cbtn.act{box-shadow:0 0 0 2px var(--acc)}
+#dglow .cpop{position:static;display:none;width:100%;max-width:460px;margin-top:10px}#dglow.cp .cpop{display:flex}
+/* dashboard 輸入框：圓角方框 */
+.num{width:78px;padding:5px 9px;border:1px solid var(--bd);border-radius:9px;background:color-mix(in srgb,var(--tx) 6%,transparent);color:var(--tx);font:600 14px Inter,sans-serif;text-align:right;transition:border-color .15s,background .15s}
+.num:focus{outline:0;border-color:var(--acc);background:color-mix(in srgb,var(--acc) 10%,transparent)}
+.sl label,.osl label{align-items:center}
+/* 簡報自動播放／轉場秒數 */
+.dh2{display:flex;align-items:center;gap:18px;flex-wrap:nowrap;white-space:nowrap;overflow-x:auto}
+.tm{gap:8px;font-size:14px;white-space:nowrap;flex:none}
+.tm .num{width:68px;font-size:16px;padding:6px 10px}
+.tm input[type=checkbox]{width:20px;height:20px;accent-color:var(--acc)}
+/* 設定面板開關動畫 */
+#set{display:grid;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(14px) scale(.94);transform-origin:calc(100% - 20px) 100%;transition:opacity .2s ease,transform .3s cubic-bezier(.2,.9,.25,1.1),visibility 0s linear .3s}
+#set.on{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition:opacity .2s ease,transform .3s cubic-bezier(.2,.9,.25,1.1),visibility 0s}
+/* 工具列開關按鈕動畫 */
+.rb{position:relative;transition:color .22s,background .22s,box-shadow .22s,transform .18s cubic-bezier(.3,1.5,.5,1)}
+.rb:active{transform:scale(.88)}
+.rb.act{outline:0;background:color-mix(in srgb,var(--acc) 16%,var(--glass));box-shadow:0 0 0 2px var(--acc),var(--sh)}
+.rb svg{transition:transform .25s cubic-bezier(.3,1.5,.5,1)}
+.rb.act svg{transform:scale(1.08)}
+.rb::after,.rb.off::after{content:"";position:absolute;left:50%;top:50%;width:28px;height:2px;margin:-1px 0 0 -14px;background:currentColor;border-radius:2px;transform:rotate(45deg) scaleX(0);transition:transform .25s cubic-bezier(.3,1.2,.5,1);pointer-events:none}
+.rb.off::after{transform:rotate(45deg) scaleX(1)}
+input[type=range]{touch-action:pan-y}
+#strip{position:relative}
+.sd{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.sd img{-webkit-user-drag:none;pointer-events:none}
+.sd.drag{z-index:5;opacity:.93;box-shadow:0 10px 28px rgba(0,0,0,.5);transition:none;cursor:grabbing}
+#sdrop{position:absolute;top:3px;bottom:6px;width:3px;margin-left:-1.5px;border-radius:2px;background:var(--acc);pointer-events:none;box-shadow:0 0 8px var(--acc)}
+#smenu{position:fixed;z-index:30;display:flex;flex-direction:column;padding:6px;border-radius:14px;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(8px) scale(.92);transform-origin:bottom right;transition:opacity .15s,transform .2s cubic-bezier(.2,.9,.25,1.1),visibility 0s linear .2s}
+#smenu.on{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition:opacity .15s,transform .2s cubic-bezier(.2,.9,.25,1.1),visibility 0s}
+#smenu button{display:flex;align-items:center;gap:9px;border:0;background:transparent;color:var(--tx);padding:11px 16px;border-radius:10px;font:500 14px Inter,system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+#smenu button:active,#smenu button:hover{background:color-mix(in srgb,var(--tx) 10%,transparent)}#smenu button.danger{color:#f43f5e}
 </style>
 </head>
 <body>
@@ -235,7 +288,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
   <button class="btn" id="af2">屏幕移到焦點</button>
  </div>
  <button class="rb glass" id="lockb" title="鎖定此投影片視角"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.5-2"/></svg></button>
- <div id="fab"><div id="fabl"><button class="rb glass" id="tbb" title="新增文字方塊"><svg viewBox="0 0 24 24"><path d="M5 6V4h14v2M12 4v16M9 20h6"/></svg></button></div><button class="rb glass" id="fabm" title="新增"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button></div>
+ <div id="fab"><div id="fabl"><button class="rb glass" id="tbb" title="新增文字方塊"><svg viewBox="0 0 24 24"><path d="M5 6V4h14v2M12 4v16M9 20h6"/></svg></button><button class="rb glass" id="glb" title="新增 Glow（背景光暈）"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="2 3"/></svg></button></div><button class="rb glass" id="fabm" title="新增"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button></div>
  <div id="tools">
   <button class="rb glass" id="add" title="新增鏡片"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4c-3.2 3.4-3.2 12.6 0 16 3.2-3.4 3.2-12.6 0-16z"/><path d="M18 13v6M15 16h6"/></svg></button>
   <button class="rb glass" id="eye" title="自動移到從鏡片看過去的視角"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
@@ -262,6 +315,15 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
  <button class="btn pri" id="pplay"><svg viewBox="0 0 24 24" aria-hidden="true" class="ic"><path d="M7 4l13 8-13 8z"/></svg>播放簡報</button></div>
  <div class="dh2"><label class="tm"><input type="checkbox" id="pauto">自動播放</label> <label class="tm" id="holdw">停留<input class="num" id="phold" type="number" min="0.5" step="0.5" value="3">秒</label> <label class="tm">轉場<input class="num" id="ptrans" type="number" min="0.3" step="0.1" value="1.6">秒</label></div>
  <div id="strip"></div></div>
+<div id="dtext" style="display:none"><div class="dh"><strong>文字方塊</strong><span class="sp"></span><button class="btn" id="dtclose" title="關閉"><svg viewBox="0 0 24 24" aria-hidden="true" class="ic"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div id="dtbody"></div></div>
+<div id="dglow" style="display:none"><div class="dh"><span class="dot" style="color:var(--acc);background:var(--acc)"></span><strong>Glow 光暈</strong><span class="sp"></span><button class="btn danger" id="gdel">刪除</button><button class="btn" id="gclose" title="關閉"><svg viewBox="0 0 24 24" aria-hidden="true" class="ic"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<div class="grid">
+<div class="osl"><label><span>大小（半徑）</span><span><input class="num" id="gr" type="number" step="any"> %</span></label><input type="range" id="grr" min="5" max="150" step="1"></div>
+<div class="osl"><label><span>強度</span><span><input class="num" id="ga" type="number" step="any"> %</span></label><input type="range" id="gar" min="0" max="100" step="1"></div>
+<div class="osl" style="grid-column:1/-1"><label><span>顏色漸層（圓心 → 外圍）</span></label>
+<div class="gcr"><button class="cbtn" id="gb0" title="中心顏色"></button><div id="gprev"></div><button class="cbtn" id="gb1" title="外圍顏色"></button></div>
+<div class="cpop glass" id="gpop"><div class="cr"><span>色相</span><input type="range" min="0" max="360" step="1"></div><div class="cr"><span>飽和</span><input type="range" min="0" max="100" step="1"></div><div class="cr"><span>亮度</span><input type="range" min="0" max="100" step="1"></div></div></div>
+</div></div>
 </div></section>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -349,7 +411,7 @@ function panBy(dx,dy){
  const dv=r.multiplyScalar(-dx*k).add(u.multiplyScalar(dy*k));V.t.add(dv);V.pan.add(dv);
 }
 function render(){
- cam();sky.position.copy(camera.position);sky.visible=false;
+ cam();G.pj.value.set(camera.projectionMatrix.elements[0],camera.projectionMatrix.elements[5]);sky.position.copy(camera.position);sky.visible=false;
  if(gizmo.visible){const dd=camera.position.distanceTo(gizmo.position);gizmo.scale.setScalar(dd*2*Math.tan(camera.fov*Math.PI/360)/(stg.clientHeight||430)*80/66)}
  R.render(scene,camera);placeDims();pCam();
 }
@@ -529,6 +591,7 @@ void main(){vec4 wp=modelMatrix*vec4(position,1.0);vWorldPos=wp.xyz;gl_Position=
 const FRAG=`
 precision highp float;
 ${HDRG}
+uniform vec4 uGl[8];uniform vec3 uGa[8];uniform vec3 uGb[8];uniform float uNg,uAsp;uniform vec2 uPj;
 uniform vec4 uLens[6];uniform vec4 uBoard;uniform vec3 uBg;uniform sampler2D uPlate;
 uniform float uNf,uIdx,uSel,uIor,uDisp,uFres,uBlur,uBright,uCubeS,uAlpha,uGlow;
 uniform mat4 uCubeM,uCubeI;
@@ -567,6 +630,23 @@ bool lens(vec4 L,vec3 o,vec3 d,out float tn,out float tf,out vec3 nn,out vec3 nf
 float fres(float cosI,float n){float F0=(n-1.0)/(n+1.0);F0*=F0;return clamp((F0+(1.0-F0)*pow(1.0-cosI,5.0)),0.0,1.0);}
 vec3 spectrum(float t){vec3 d=vec3(t-0.12,t-0.50,t-0.88);return exp(-d*d/vec3(0.08,0.05,0.08));}
 ${PLATEGL}
+vec3 glowBg(vec3 d){
+ vec3 col=vec3(0.0);
+ vec3 vd=(viewMatrix*vec4(d,0.0)).xyz;
+ if(vd.z>-1e-3)return col;
+ vec2 nd=vec2(uPj.x*vd.x,uPj.y*vd.y)/(-vd.z);
+ vec2 uv=vec2(nd.x*0.5+0.5,0.5-nd.y*0.5);
+ float e0=exp(-3.2);
+ for(int i=0;i<8;i++){
+  if(float(i)>=uNg)break;
+  vec4 g=uGl[i];
+  float t=length(vec2(uv.x-g.x,(uv.y-g.y)*uAsp))/g.z;
+  if(t>=1.0)continue;
+  float k=(exp(-3.2*t*t)-e0)/(1.0-e0);
+  col=mix(col,mix(uGa[i],uGb[i],t),g.w*k);
+ }
+ return col;
+}
 vec3 sceneCol(vec3 o,vec3 d,float envOn){
  float cov=1.0;
  vec3 col=vec3(0.0);bool hit=false;
@@ -597,7 +677,7 @@ vec3 sceneCol(vec3 o,vec3 d,float envOn){
    }
   }
  }
- vec3 bgc=(envOn>0.5?hdri(d):uBg);return hit?mix(bgc,col,cov):bgc;
+ vec3 bgc=(envOn>0.5?hdri(d):glowBg(d));return hit?mix(bgc,col,cov):bgc;
 }
 void main(){
  vec3 dW=normalize(vWorldPos-cameraPosition);
@@ -653,6 +733,7 @@ void main(){
 `;
 const rt=new THREE.WebGLRenderTarget(2,2,{minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter});
 const G={glow:{value:0},ior:{value:S.n},disp:{value:S.disp},scene:{value:rt.texture},vp:{value:new THREE.Matrix4()},L:{value:160},lens:{value:Array.from({length:6},()=>new THREE.Vector4())},nf:{value:0},blur:{value:0},bright:{value:1},cubeM:{value:new THREE.Matrix4()},cubeI:{value:new THREE.Matrix4()},cubeS:{value:CUBE.s},faces:{value:ATLAS},board:{value:new THREE.Vector4(CUBE.x,CUBE.s,0,0)},bg:{value:new THREE.Color(0x070a12)},plate:{value:GLYPH},exp:{value:S.exp},rot:{value:S.rot},fres:{value:S.fres},env:{value:null}};
+G.gl={value:Array.from({length:8},()=>new THREE.Vector4())};G.ga={value:Array.from({length:8},()=>new THREE.Vector3())};G.gb={value:Array.from({length:8},()=>new THREE.Vector3())};G.ng={value:0};G.asp={value:1};G.pj={value:new THREE.Vector2(1,1)};
 const HD={};{const c=document.createElement('canvas');c.width=c.height=2;const g=c.getContext('2d');g.fillStyle='#05070c';g.fillRect(0,0,2,2);G.env.value=new THREE.CanvasTexture(c)}
 {const im=new Image();im.onload=()=>{const x=new THREE.Texture(im);x.minFilter=x.magFilter=THREE.LinearFilter;x.generateMipmaps=false;x.wrapS=THREE.RepeatWrapping;x.needsUpdate=true;HD.hall=x;if(S.hd==='hall'){G.env.value=x;update()}};im.crossOrigin = 'anonymous';
 im.src = 'https://raw.githubusercontent.com/username1yee/convex-lens-sim/refs/heads/main/HDRI.png';}
@@ -670,14 +751,14 @@ function glassU(fo,sp){
  const ls=S.lenses.slice(0,6);G.nf.value=ls.length;
  ls.forEach((l,i)=>{const sh=shapeOf(l);G.lens.value[i].set(l.x,sh.Rr,sh.cz,sh.a)});
  cube.updateMatrixWorld(true);G.cubeM.value.copy(cube.matrixWorld);G.cubeI.value.copy(cube.matrixWorld).invert();
- G.board.value.set(CUBE.x,CUBE.s,({cube:0,plate:1,chk:2})[S.otype],0);G.bg.value.set(getComputedStyle(document.body).backgroundColor);
+ G.board.value.set(CUBE.x,CUBE.s,({cube:0,plate:1,chk:2})[S.otype],0);G.bg.value.set(0x000000);
  G.blur.value=blurAng(fo,sp);
  G.bright.value=(sp&&!S.glow)?.3+.7*sp.q:1;G.glow.value=S.glow?1:0;
 }
 function buildMeshes(){
  meshes.forEach(m=>{scene.remove(m);m.geometry.dispose();m.material.dispose()});meshes=[];
  S.lenses.forEach((l,i)=>{
-  const mat=new THREE.ShaderMaterial({uniforms:{uLens:G.lens,uNf:G.nf,uIdx:{value:i},uSel:{value:0},uAlpha:{value:1},uIor:G.ior,uDisp:G.disp,uFres:G.fres,uBlur:G.blur,uBright:G.bright,uCubeM:G.cubeM,uCubeI:G.cubeI,uCubeS:G.cubeS,uFaces:G.faces,uBoard:G.board,uGlow:G.glow,uBg:G.bg,uPlate:G.plate,uEnv:G.env,uExp:G.exp,uRot:G.rot},vertexShader:VERT,fragmentShader:FRAG,side:THREE.DoubleSide});
+  const mat=new THREE.ShaderMaterial({uniforms:{uLens:G.lens,uNf:G.nf,uIdx:{value:i},uSel:{value:0},uAlpha:{value:1},uIor:G.ior,uDisp:G.disp,uFres:G.fres,uBlur:G.blur,uBright:G.bright,uCubeM:G.cubeM,uCubeI:G.cubeI,uCubeS:G.cubeS,uFaces:G.faces,uBoard:G.board,uGlow:G.glow,uGl:G.gl,uGa:G.ga,uGb:G.gb,uNg:G.ng,uAsp:G.asp,uPj:G.pj,uBg:G.bg,uPlate:G.plate,uEnv:G.env,uExp:G.exp,uRot:G.rot},vertexShader:VERT,fragmentShader:FRAG,side:THREE.DoubleSide});
   const m=new THREE.Mesh(new THREE.BufferGeometry(),mat);m.rotation.y=Math.PI/2;m.userData={id:i,key:l.f+'|'+l.D+'|'+S.n+'|'+l.E};
   applyShape(m,l);scene.add(m);meshes.push(m);
  });
@@ -837,8 +918,8 @@ function sync(){
  });
 }
 function dash(){
- const isObj=S.sel==='cube',isL=!!curLens();$('#dhl').style.display=isL?'':'none';$('#dgl').style.display=isL?'':'none';$('#dobj').style.display=isObj?'flex':'none';document.querySelectorAll('.opts button').forEach(b=>b.classList.toggle('act',b.dataset.o===S.otype));
- const l=curLens(),showSl=P.on&&!l&&!isObj;$('#dslides').style.display=showSl?'flex':'none';app.classList.toggle('open',(!!l||isObj||showSl)&&!P.playing);app.classList.toggle('pm',P.on);app.classList.toggle('play',P.playing);
+ const isT=!!tbSel&&P.on&&!P.playing,isG=!!glSel&&P.on&&!P.playing&&!isT,isObj=S.sel==='cube'&&!isT&&!isG,isL=!!curLens()&&!isT&&!isG;$('#dtext').style.display=isT?'flex':'none';$('#dglow').style.display=isG?'block':'none';$('#dhl').style.display=isL?'':'none';$('#dgl').style.display=isL?'':'none';$('#dobj').style.display=isObj?'flex':'none';document.querySelectorAll('.opts button').forEach(b=>b.classList.toggle('act',b.dataset.o===S.otype));
+ const l=curLens(),showSl=P.on&&!l&&!isObj&&!isT&&!isG;$('#dslides').style.display=showSl?'flex':'none';app.classList.toggle('open',(isL||isObj||showSl||isT||isG)&&!P.playing);app.classList.toggle('pm',P.on);app.classList.toggle('play',P.playing);
  if(l){$('#dtitle').textContent='鏡片 L'+(S.sel+1);const c=hex(COL[S.sel%6]);$('#ddot').style.background=c;$('#ddot').style.color=c}
  sync();
 }
@@ -963,7 +1044,7 @@ function pThumb(){
   R.render(scene,camera);
   const g=TC.getContext('2d'),w=R.domElement.width,h=R.domElement.height,ar=192/108;
   let sw=w,sh=w/ar;if(sh>h){sh=h;sw=h*ar}
-  g.fillStyle=getComputedStyle(document.body).backgroundColor;g.fillRect(0,0,192,108);
+  g.fillStyle='#000';g.fillRect(0,0,192,108);(s.gl||[]).forEach(q=>{const k=192/sw,cx=(q.x*w-(w-sw)/2)*k,cy=(q.y*h-(h-sh)/2)*k,gr=g.createRadialGradient(cx,cy,0,cx,cy,Math.max(1,q.r*w*k));glStops(q,1).forEach(([t,c])=>gr.addColorStop(t,c));g.fillStyle=gr;g.fillRect(0,0,192,108)});
   g.drawImage(R.domElement,(w-sw)/2,(h-sh)/2,sw,sh,0,0,192,108);
   s.thumb=TC.toDataURL('image/jpeg',.7);
   const c=document.querySelector('.sd.cur');if(c){const im=c.querySelector('img');if(im)im.src=s.thumb}
@@ -987,12 +1068,12 @@ function mkSlide(from){
 }
 function lockUI(){const s=curSlide(),on=!!(P.on&&s&&s.lock),b=$('#lockb');b.classList.toggle('act',on);b.innerHTML=on?LOCKED:UNLOCKED;b.title=on?'解除視角鎖定':'鎖定此投影片視角'}
 function pRender(){
- const st=$('#strip');st.innerHTML='';
+ sMenuClose();const st=$('#strip');st.innerHTML='';
  P.slides.forEach((s,i)=>{
   const d=document.createElement('div');d.className='sd'+(i===P.cur?' cur':'');
-  d.innerHTML='<img alt=""'+(s.thumb?' src="'+s.thumb+'"':'')+'><span class="sn">'+(i+1)+'</span>'+(s.lock?'<span class="slk">'+LOCKED+'</span>':'')+'<button class="sx" title="刪除投影片">×</button>';
-  d.onclick=()=>{if(i!==P.cur)pGo(i)};
-  d.querySelector('.sx').onclick=e=>{e.stopPropagation();pDel(i)};
+  d.innerHTML='<img alt=""'+(s.thumb?' src="'+s.thumb+'"':'')+'><span class="sn">'+(i+1)+'</span>'+(s.lock?'<span class="slk">'+LOCKED+'</span>':'')+'<button class="sm" title="更多"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>';
+  d.onclick=()=>{if(slNC)return;if(i!==P.cur)pGo(i)};
+  const mb=d.querySelector('.sm');mb.onclick=e=>{e.stopPropagation();sMenuOpen(i,mb)};slPress(d,i);
   st.appendChild(d);
  });
  const a=document.createElement('div');a.className='sd addc';a.textContent='+';a.title='新增投影片（複製目前這張）';a.onclick=pAdd;st.appendChild(a);
@@ -1045,7 +1126,7 @@ function mixSt(a,b,e){
  return o;
 }
 let pb=null;
-function pShow(i){const s=P.slides[i];setCam(s.cam);applySt(s.st)}
+function pShow(i){const s=P.slides[i];glDraw(s.gl||[]);setCam(s.cam);applySt(s.st)}
 function pCount(){if($('#pcount'))$('#pcount').textContent=(pb.from+1)+' / '+P.slides.length}
 function pPlay(){if(!P.playing){tbSelect(null);tbKey=''}
  if(P.playing||!P.slides.length)return;
@@ -1077,7 +1158,7 @@ function pFrame(now){tbTick();if(P.playing&&(pb.phase==='out'||pb.phase==='in'))
     rayProgress: rayProg, // 傳遞畫線進度
     dims: (A.st.dims ? 1 : 0) + ((B.st.dims ? 1 : 0) - (A.st.dims ? 1 : 0)) * e
   };
-  applySt(mixSt(A.st, B.st, e));
+  glDraw(glMix(A.gl||[],B.gl||[],e));applySt(mixSt(A.st, B.st, e));
 
 
   if(p>=1){FX=null;pb.from=pb.to;pb.phase=tbHas(pb.from)?'in':'hold';pb.t0=now;pCount()}
@@ -1122,43 +1203,16 @@ addEventListener('keydown',e=>{
 
 
 // ---------- text boxes (簡報文字方塊) ----------
-const TBL=document.createElement('div');TBL.id='tbl';TBL.innerHTML='<div id="tbA"></div><div id="tbB"></div>';stg.appendChild(TBL);
+const TBL=document.createElement('div');TBL.id='tbl';TBL.innerHTML='<div id="tbA"></div><div id="tbB"></div><div id="tbG"></div>';stg.appendChild(TBL);
 const tbA=$('#tbA'),tbB=$('#tbB');
-let tbSel=null,tbDrag=null,tbRb=false,tbKey='';
+let tbSel=null,tbDrag=null,tbRb=false,tbKey='',tbPT=null,glSel=null;
 const VW=()=>stg.clientWidth||1,VH=()=>stg.clientHeight||1;
 const rgb2hex=c=>'#'+(c.match(/\d+/g)||[0,0,0]).slice(0,3).map(v=>(+v).toString(16).padStart(2,'0')).join('');
 function tbApply(el,t){
  const W=VW(),H=VH(),s=el.style;
  s.left=t.x*W+'px';s.top=t.y*H+'px';s.width=t.w*W+'px';s.minHeight=t.h*H+'px';
- s.fontSize=t.fs*W+'px';s.color=t.c||'var(--tx)';s.fontWeight=t.b?'700':'400';s.fontFamily=t.ff?'"'+t.ff+'",Inter,"Noto Sans TC",sans-serif':'';if(t.ff)loadFont(t.ff);s.fontStyle=t.i?'italic':'normal';s.letterSpacing=(t.ls||0)+'em';s.lineHeight=t.lh||1.35;s.textAlign=t.al||'left';
+ s.fontSize=t.fs*W+'px';s.color=t.c||'#fff';s.fontWeight=t.b?'700':'400';s.fontFamily=t.ff?'"'+t.ff+'",Inter,"Noto Sans TC",sans-serif':'';if(t.ff)loadFont(t.ff);s.fontStyle=t.i?'italic':'normal';s.letterSpacing=(t.ls||0)+'em';s.lineHeight=t.lh||1.35;s.textAlign=t.al||'left';
  s.transform=t.r?'rotate('+t.r+'deg)':'';
-
- const tb=el.querySelector('.tbt');
- if(tb){
-  // 1. 取得目前的縮放比例反函數（維持工具列圖標在畫面放大時不會跟著變得巨大或過小）
-  const u = 1 / Z.s;
-  
-  // 2. 判斷文字方塊目前距離畫面頂部的實際像素。如果小於 60px（代表上方空間不夠），就強制把工具列放到下方
-  const topPx = t.y * H * Z.s; // 考慮縮放後的螢幕實際高度位置
-  const isLow = topPx < 70;
-  el.classList.toggle('low', isLow);
-
-  // 3. 根據上方或下方動態設定距離（不受縮放影響的固定像素距離，除以 Z.s 配合整體縮放矩陣）
-  const offsetDistance = (50 / Z.s)*1.5; 
-  if (isLow) {
-    tb.style.top = 'auto';
-    tb.style.bottom = `-${offsetDistance}px`;
-  } else {
-    tb.style.bottom = 'auto';
-    tb.style.top = `-${offsetDistance}px`;
-  }
-
-  // 4. 計算選取框旋轉與縮放時的錨點修正
-  const cx = el.offsetWidth / 2 - tb.offsetLeft;
-  const cy = el.offsetHeight / 2 - tb.offsetTop;
-  tb.style.transformOrigin = '50% 50%';
-  tb.style.transform = `translateX(-50%) ${t.r ? `rotate(${-(t.r)}deg)` : ''} scale(${u})`;
- }
 }
 
 function contentH(el){const m=el.style.minHeight;el.style.minHeight='0px';const h=el.offsetHeight;el.style.minHeight=m;return h}
@@ -1167,11 +1221,8 @@ function tbMake(t,edit){
  const tt=document.createElement('div');tt.className='tt';tt.textContent=t.text;tt.spellcheck=false;el.appendChild(tt);
  tbApply(el,t);if(!edit)return el;
  if(tbSel===t)el.classList.add('sel');
- el.insertAdjacentHTML('beforeend',['nw','n','ne','e','se','s','sw','w'].map(p=>'<i class="hd '+p+'" data-p="'+p+'"></i>').join('')+'<i class="rot" title="旋轉"></i>'+
-  '<div class="tbt glass"><button class="cbtn" title="文字顏色"></button><button class="btn fbtn" title="字體">Aa</button><button class="btn tbs" data-s="b" title="粗體"><b>B</b></button><button class="btn tbs" data-s="i" title="斜體"><i>I</i></button><button class="btn spbtn" title="字距／行距"><svg viewBox="0 0 24 24" class="ic"><path d="M4 5v14M20 5v14M8 12h8M8 12l2-2M8 12l2 2M16 12l-2-2M16 12l-2 2"/></svg></button><button class="btn albtn" title="對齊"></button><button class="btn danger tbd" title="刪除"><svg viewBox="0 0 24 24" class="ic"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button><div class="apop glass"></div><div class="spop glass"><div class="cr"><span>字距</span><input type="range" min="-0.1" max="1" step="0.01"><span></span></div><div class="cr"><span>行距</span><input type="range" min="0.8" max="3" step="0.05"><span></span></div></div><div class="fpop glass"></div><div class="cpop glass"><div class="cr"><span>色相</span><input type="range" min="0" max="360" step="1"></div><div class="cr"><span>飽和</span><input type="range" min="0" max="100" step="1"></div><div class="cr"><span>亮度</span><input type="range" min="0" max="100" step="1"></div><div class="cr"><span>透明度</span><input type="range" min="0" max="100" step="1"></div></div></div>');
- tbBar(el,t,tt);
- 
- el.querySelector('.tbd').addEventListener('click',()=>tbDel(t));
+ el.insertAdjacentHTML('beforeend',['nw','n','ne','e','se','s','sw','w'].map(p=>'<i class="hd '+p+'" data-p="'+p+'"></i>').join('')+'<i class="rot" title="旋轉"></i>');
+
  el.addEventListener('pointerdown',e=>tbDown(e,el,t));
  el.addEventListener('pointermove',e=>tbMove(e));
  el.addEventListener('pointerup',e=>tbUp(e,el,t));el.addEventListener('pointercancel',()=>{tbDrag=null});
@@ -1197,7 +1248,7 @@ async function addUserFont(f){
  let fam=f.name.replace(/\.[^.]+$/,'').replace(/["'\\]/g,'').trim()||'MyFont',k=fam,i=2;while(UF.includes(fam)||GF.some(x=>x[0]===fam))fam=k+' '+(i++);
  const face=new FontFace(fam,await f.arrayBuffer());await face.load();document.fonts.add(face);UF.push(fam);return fam;
 }
-function tbFont(el,t){
+function tbFont(el,t,box){
  const fb=el.querySelector('.fbtn'),fp=el.querySelector('.fpop');
  const mark=()=>fb.classList.toggle('act',!!t.ff);mark();
  function build(){
@@ -1206,12 +1257,12 @@ function tbFont(el,t){
   [['預設字體',null],...GF.map(x=>[x[0],x[0]]),...UF.map(x=>[x,x])].forEach(([lb,fam])=>{
    const b=document.createElement('button');b.className='fi'+((t.ff||null)===fam?' act':'');b.textContent=lb;
    if(fam){loadFont(fam);b.style.fontFamily='"'+fam+'",sans-serif'}
-   b.onclick=()=>{t.ff=fam;tbApply(el,t);mark();el.classList.remove('fp')};
+   b.onclick=()=>{t.ff=fam;tbApply(box,t);mark();el.classList.remove('fp')};
    fl.appendChild(b);
   });
   const inp=fp.querySelector('input');fp.querySelector('.fup').onclick=()=>inp.click();
   inp.onchange=async()=>{const f=inp.files[0];if(!f)return;
-   try{const fam=await addUserFont(f);t.ff=fam;tbApply(el,t);mark();el.classList.remove('fp')}catch(e){toast().textContent='無法讀取這個字體檔。'}};
+   try{const fam=await addUserFont(f);t.ff=fam;tbApply(box,t);mark();el.classList.remove('fp')}catch(e){toast().textContent='無法讀取這個字體檔。'}};
  }
  fb.addEventListener('click',()=>{
   const on=!el.classList.contains('fp');el.classList.remove('cp','sp','ap');el.classList.toggle('fp',on);if(!on)return;
@@ -1220,12 +1271,12 @@ function tbFont(el,t){
   let dx=Math.min(0,sr.right-4-pr.right);if(pr.left+dx<sr.left+4)dx=sr.left+4-pr.left;fp.style.left=dx+'px';
  });
 }
-function tbSpace(el,t){
+function tbSpace(el,t,box){
  const b=el.querySelector('.spbtn'),pp=el.querySelector('.spop'),sl=[...pp.querySelectorAll('input')],vs=[...pp.querySelectorAll('.cr span:last-child')],K=[['ls',0],['lh',1.35]];
  const paint=()=>{sl.forEach((x,i)=>{const v=t[K[i][0]]!=null?t[K[i][0]]:K[i][1];x.value=v;vs[i].textContent=v.toFixed(2);x.style.setProperty('--p',((v-x.min)/(x.max-x.min)*100)+'%')});
   b.classList.toggle('act',(t.ls!=null&&t.ls!==0)||(t.lh!=null&&t.lh!==1.35))};
  paint();
- sl.forEach((x,i)=>x.addEventListener('input',()=>{t[K[i][0]]=+x.value;tbApply(el,t);paint()}));
+ sl.forEach((x,i)=>x.addEventListener('input',()=>{t[K[i][0]]=+x.value;tbApply(box,t);paint()}));
  sl.forEach((x,i)=>armSlider(x,()=>K[i][1]));
  b.addEventListener('click',()=>{
   const on=!el.classList.contains('sp');el.classList.remove('cp','fp','ap');el.classList.toggle('sp',on);if(!on)return;
@@ -1236,24 +1287,24 @@ function tbSpace(el,t){
 }
 const ALN=[['left','靠左','M4 6h16M4 10h10M4 14h16M4 18h10'],['center','置中','M4 6h16M7 10h10M4 14h16M7 18h10'],['right','靠右','M4 6h16M10 10h10M4 14h16M10 18h10']];
 const alIc=d=>'<svg viewBox="0 0 24 24" class="ic"><path d="'+d+'"/></svg>';
-function tbAlign(el,t){
+function tbAlign(el,t,box){
  const b=el.querySelector('.albtn'),pp=el.querySelector('.apop'),cur=()=>t.al||'left';
  const mark=()=>{b.innerHTML=alIc(ALN.find(a=>a[0]===cur())[2])};mark();
  b.addEventListener('click',()=>{
   const on=!el.classList.contains('ap');el.classList.remove('cp','fp','sp');el.classList.toggle('ap',on);if(!on)return;
   pp.innerHTML='';
   ALN.forEach(([k,lb,d])=>{const o=document.createElement('button');o.className='fi'+(cur()===k?' act':'');o.innerHTML=alIc(d)+'<span>'+lb+'</span>';
-   o.onclick=()=>{t.al=k;tbApply(el,t);mark();el.classList.remove('ap')};pp.appendChild(o)});
+   o.onclick=()=>{t.al=k;tbApply(box,t);mark();el.classList.remove('ap')};pp.appendChild(o)});
   el.classList.toggle('pu',!el.classList.contains('low')&&t.y*VH()>200);
   pp.style.left='0px';const pr=pp.getBoundingClientRect(),sr=stg.getBoundingClientRect();
   let dx=Math.min(0,sr.right-4-pr.right);if(pr.left+dx<sr.left+4)dx=sr.left+4-pr.left;pp.style.left=dx+'px';
  });
 }
-function tbBar(el,t,tt){
+function tbBar(el,t,tt,box){
  const bar=el.querySelector('.tbt'),cb=el.querySelector('.cbtn'),sl=[...el.querySelectorAll('.cpop input')];
  const CK='repeating-conic-gradient(#999 0 25%,#fff 0 50%) 0 0/8px 8px';
  const hsl=()=>{if(!t.hsl){const m=(getComputedStyle(tt).color.match(/[\d.]+/g)||[0,0,0]).map(Number);t.hsl=[...rgb2hsl(m[0],m[1],m[2]),m[3]!=null?m[3]:1]}return t.hsl};
- const swatch=()=>{const c=t.c||'var(--tx)';cb.style.background='linear-gradient('+c+','+c+'),'+CK};
+ const swatch=()=>{const c=t.c||'#fff';cb.style.background='linear-gradient('+c+','+c+'),'+CK};
  const paint=()=>{const[h,s,l,a]=hsl(),c='hsl('+h+','+s+'%,'+l+'%)',g=(i,v)=>sl[i].style.setProperty('--g',v);
   [h,s,l,Math.round(a*100)].forEach((v,i)=>sl[i].value=v);
   g(0,'linear-gradient(90deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)');
@@ -1261,16 +1312,16 @@ function tbBar(el,t,tt){
   g(2,'linear-gradient(90deg,#000,hsl('+h+','+s+'%,50%),#fff)');
   g(3,'linear-gradient(90deg,hsla('+h+','+s+'%,'+l+'%,0),'+c+'),'+CK)};
  swatch();
- sl.forEach((x,i)=>x.addEventListener('input',()=>{const H=hsl();H[i]=i===3?x.value/100:+x.value;t.c='hsla('+H[0]+','+H[1]+'%,'+H[2]+'%,'+H[3]+')';tbApply(el,t);paint();swatch()}));
- sl.forEach((x,i)=>armSlider(x,()=>{const m=(getComputedStyle(document.body).color.match(/[\d.]+/g)||[0,0,0]).map(Number),d=[...rgb2hsl(m[0],m[1],m[2]),1];return i===3?100:d[i]}));
+ sl.forEach((x,i)=>x.addEventListener('input',()=>{const H=hsl();H[i]=i===3?x.value/100:+x.value;t.c='hsla('+H[0]+','+H[1]+'%,'+H[2]+'%,'+H[3]+')';tbApply(box,t);paint();swatch()}));
+ sl.forEach((x,i)=>armSlider(x,()=>{const m=[255,255,255],d=[...rgb2hsl(m[0],m[1],m[2]),1];return i===3?100:d[i]}));
  cb.addEventListener('click',()=>{
   el.classList.remove('fp','sp','ap');const on=!el.classList.contains('cp');el.classList.toggle('cp',on);if(!on)return;
   hsl();paint();el.classList.toggle('pu',!el.classList.contains('low')&&t.y*VH()>230);
   const pop=el.querySelector('.cpop');pop.style.left='0px';const pr=pop.getBoundingClientRect(),sr=stg.getBoundingClientRect();
   let dx=Math.min(0,sr.right-4-pr.right);if(pr.left+dx<sr.left+4)dx=sr.left+4-pr.left;pop.style.left=dx+'px';
  });
- el.querySelectorAll('.tbs').forEach(b=>{const k=b.dataset.s,pa=()=>b.classList.toggle('act',!!t[k]);pa();b.addEventListener('click',()=>{t[k]=!t[k];pa();tbApply(el,t)})});
- bar.addEventListener('pointerdown',e=>{if(e.target.closest('button'))e.preventDefault()});tbFont(el,t);tbSpace(el,t);tbAlign(el,t);
+ el.querySelectorAll('.tbs').forEach(b=>{const k=b.dataset.s,pa=()=>b.classList.toggle('act',!!t[k]);pa();b.addEventListener('click',()=>{t[k]=!t[k];pa();tbApply(box,t)})});
+ bar.addEventListener('pointerdown',e=>{if(e.target.closest('button'))e.preventDefault()});tbFont(el,t,box);tbSpace(el,t,box);tbAlign(el,t,box);
 }
 
 function tbRender(){
@@ -1279,11 +1330,20 @@ function tbRender(){
  TBL.style.display=P.on?'':'none';
  if(!list.includes(tbSel))tbSel=null;
  if(P.on)list.forEach(t=>tbA.appendChild(tbMake(t,true)));
- tbA.style.opacity=1;tbB.style.opacity=1;tbRb=false;
+ tbA.style.opacity=1;tbB.style.opacity=1;tbRb=false;tbPT=null;tbPanel();glReload();dash();
 }
 function tbSelect(t){
  if(!t){const a=document.activeElement;if(a&&a.isContentEditable)a.blur()}
- tbSel=t;[...tbA.children].forEach(c=>{c.classList.toggle('sel',c._t===t);if(c._t!==t){c.classList.remove('cp','fp','sp','ap')}else tbApply(c,t)});
+ if(t&&glSel){glSel=null;[...$('#tbG').children].forEach(h=>h.classList.remove('sel'))}tbSel=t;[...tbA.children].forEach(c=>{c.classList.toggle('sel',c._t===t);if(c._t!==t){c.classList.remove('cp','fp','sp','ap')}else tbApply(c,t)});tbPanel();dash();
+}
+const TBHTML='<div class="tbt glass"><button class="cbtn" title="文字顏色"></button><button class="btn fbtn" title="字體">Aa</button><button class="btn tbs" data-s="b" title="粗體"><b>B</b></button><button class="btn tbs" data-s="i" title="斜體"><i>I</i></button><button class="btn spbtn" title="字距／行距"><svg viewBox="0 0 24 24" class="ic"><path d="M4 5v14M20 5v14M8 12h8M8 12l2-2M8 12l2 2M16 12l-2-2M16 12l-2 2"/></svg></button><button class="btn albtn" title="對齊"></button><button class="btn danger tbd" title="刪除"><svg viewBox="0 0 24 24" class="ic"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button><div class="apop glass"></div><div class="spop glass"><div class="cr"><span>字距</span><input type="range" min="-0.1" max="1" step="0.01"><span></span></div><div class="cr"><span>行距</span><input type="range" min="0.8" max="3" step="0.05"><span></span></div></div><div class="fpop glass"></div><div class="cpop glass"><div class="cr"><span>色相</span><input type="range" min="0" max="360" step="1"></div><div class="cr"><span>飽和</span><input type="range" min="0" max="100" step="1"></div><div class="cr"><span>亮度</span><input type="range" min="0" max="100" step="1"></div><div class="cr"><span>透明度</span><input type="range" min="0" max="100" step="1"></div></div></div>';
+function tbPanel(){
+ const H=$('#dtext'),t=tbSel;if(t===tbPT)return;tbPT=t;
+ H.classList.remove('cp','fp','sp','ap');
+ const body=$('#dtbody');body.innerHTML='';if(!t)return;
+ const box=[...tbA.children].find(c=>c._t===t),tt=box&&box.querySelector('.tt');if(!tt)return;
+ body.insertAdjacentHTML('beforeend',TBHTML);tbBar(H,t,tt,box);
+ body.querySelector('.tbd').addEventListener('click',()=>tbDel(t));
 }
 function tbDel(t){const s=curSlide();if(!s)return;s.tb=(s.tb||[]).filter(x=>x!==t);if(tbSel===t)tbSel=null;tbRender()}
 function tbEdit(el,t){
@@ -1320,7 +1380,8 @@ function tbMove(e){
  const d=tbDrag;if(!d)return;const dx=(e.clientX-d.sx)/Z.s,dy=(e.clientY-d.sy)/Z.s;
  if(!d.moved&&Math.abs(dx)+Math.abs(dy)<4)return;d.moved=true;
  const W=VW(),H=VH(),t=d.t,p=d.p,el=d.el;
- if(p==='m'){t.x=clamp(d.x0+dx,30-d.w0,W-30)/W;t.y=clamp(d.y0+dy,0,H-20)/H;tbApply(el,t);return}
+ if(p==='m'){const vr=vp.getBoundingClientRect(),sr=stg.getBoundingClientRect(),k=Z.s,L=(vr.left-sr.left)/k,Rt=(vr.right-sr.left)/k,Tp=(vr.top-sr.top)/k,Bt=(vr.bottom-sr.top)/k;
+  t.x=clamp(d.x0+dx,L+30-d.w0,Rt-30)/W;t.y=clamp(d.y0+dy,Tp+30-d.h0,Bt-30)/H;tbApply(el,t);return}
  if(p==='r'){
   const v=stg.getBoundingClientRect(),cx=v.left+(d.x0+d.w0/2)*Z.s,cy=v.top+(d.y0+d.h0/2)*Z.s;
   let r=d.r0+(Math.atan2(e.clientY-cy,e.clientX-cx)-Math.atan2(d.sy-cy,d.sx-cx))*180/Math.PI;
@@ -1355,10 +1416,10 @@ function tbTick(){
 }
 const _pGo=pGo;pGo=function(i){_pGo(i);resetZ();syncAuto();tbRender()};
 const _pToggle=pToggle;pToggle=function(on){_pToggle(on);if(on)$('#set').classList.remove('on');$('#fab').classList.remove('open');syncAuto();tbRender()};
-const _mkSlide=mkSlide;mkSlide=function(f){const s=_mkSlide(f);s.tb=f?JSON.parse(JSON.stringify(f.tb||[])):[];s.auto=f?!!f.auto:false;s.hold=f?(f.hold||3):3;return s};
+const _mkSlide=mkSlide;mkSlide=function(f){const s=_mkSlide(f);s.tb=f?JSON.parse(JSON.stringify(f.tb||[])):[];s.gl=f?JSON.parse(JSON.stringify(f.gl||[])):[];s.auto=f?!!f.auto:false;s.hold=f?(f.hold||3):3;return s};
 $('#tbb').onclick=()=>{tbAdd();$('#fab').classList.remove('open')};$('#fabm').onclick=()=>$('#fab').classList.toggle('open');
 document.addEventListener('pointerdown',e=>{if(!e.target.closest('#fab'))$('#fab').classList.remove('open')});
-dom.addEventListener('pointerdown',()=>{if(!P.playing&&tbSel)tbSelect(null)});
+dom.addEventListener('pointerdown',()=>{if(!P.playing&&tbSel)tbSelect(null);if(!P.playing&&glSel)glSelect(null)});
 new ResizeObserver(()=>{[...tbA.children,...tbB.children].forEach(el=>el._t&&tbApply(el,el._t))}).observe(stg);
 addEventListener('keydown',e=>{
  if(P.playing||!tbSel)return;const a=document.activeElement,ed=a&&(a.isContentEditable||/INPUT|TEXTAREA/.test(a.tagName));
@@ -1366,6 +1427,184 @@ addEventListener('keydown',e=>{
  else if((e.key==='Delete'||e.key==='Backspace')&&!ed)tbDel(tbSel);
 });
 
+
+// ---------- Glow (背景光暈) ----------
+const glL=document.createElement('div');glL.id='gll';stg.insertBefore(glL,stg.firstChild);
+const hx=c=>[1,3,5].map(i=>parseInt(c.slice(i,i+2),16));
+const mixc=(a,b,t)=>a.map((v,i)=>v+(b[i]-v)*t);
+const toHex=a=>'#'+a.map(v=>Math.round(clamp(v,0,255)).toString(16).padStart(2,'0')).join('');
+function glStops(g,al){
+ const A=hx(g.c0),B=hx(g.c1),e0=Math.exp(-3.2),st=[];
+ for(let i=0;i<=10;i++){const t=i/10,c=mixc(A,B,t).map(Math.round),k=(Math.exp(-3.2*t*t)-e0)/(1-e0);st.push([t,'rgba('+c.join(',')+','+(g.a*al*k).toFixed(4)+')'])}
+ return st;
+}
+const glCss=(g,al)=>'radial-gradient(circle closest-side,'+glStops(g,al).map(([t,c])=>c+' '+(t*100)+'%').join(',')+')';
+function glDraw(list){
+ const W=VW(),H=VH();
+ while(glL.children.length>list.length)glL.lastChild.remove();
+ while(glL.children.length<list.length){const d=document.createElement('div');d.className='gl';glL.appendChild(d)}
+ list.forEach((g,i)=>{const s=glL.children[i].style,z=2*g.r*W;s.left=g.x*W+'px';s.top=g.y*H+'px';s.width=z+'px';s.height=z+'px';s.background=glCss(g,g.al==null?1:g.al)});
+ const n=Math.min(8,list.length);G.ng.value=n;G.asp.value=H/W;
+ for(let i=0;i<n;i++){const g=list[i],al=g.al==null?1:g.al;G.gl.value[i].set(g.x,g.y,g.r,g.a*al);G.ga.value[i].set(...hx(g.c0).map(v=>v/255));G.gb.value[i].set(...hx(g.c1).map(v=>v/255))}
+ if(!P.playing)render();
+}
+function glMix(A,B,e){
+ const out=[],n=Math.max(A.length,B.length);
+ for(let i=0;i<n;i++){const a=A[i],b=B[i];
+  if(a&&b)out.push({x:a.x+(b.x-a.x)*e,y:a.y+(b.y-a.y)*e,r:a.r+(b.r-a.r)*e,a:a.a+(b.a-a.a)*e,c0:toHex(mixc(hx(a.c0),hx(b.c0),e)),c1:toHex(mixc(hx(a.c1),hx(b.c1),e))});
+  else if(a)out.push({...a,al:1-e});else out.push({...b,al:e});
+ }
+ return out;
+}
+const glList=()=>{const s=curSlide();return P.on&&s?(s.gl||[]):[]};
+function glThumb(){clearTimeout(thT);thT=setTimeout(pThumb,350)}
+function glPos(h,g){h.style.left=g.x*VW()+'px';h.style.top=g.y*VH()+'px'}
+function glMarks(){
+ const L=$('#tbG');L.innerHTML='';
+ glList().forEach(g=>{
+  const h=document.createElement('div');h.className='glh'+(g===glSel?' sel':'');h._g=g;glPos(h,g);
+  h.addEventListener('pointerdown',e=>{
+   if(P.playing)return;e.preventDefault();e.stopPropagation();
+   if(tbSel)tbSelect(null);h.setPointerCapture(e.pointerId);const hr=h.getBoundingClientRect();glSelect(g);
+   glDrag={g,h,ox:e.clientX-(hr.left+hr.width/2),oy:e.clientY-(hr.top+hr.height/2)};
+  });
+  h.addEventListener('pointermove',e=>{
+   const d=glDrag;if(!d||d.h!==h)return;
+   const vr=vp.getBoundingClientRect(),sr=stg.getBoundingClientRect(),m=14,cx=clamp(e.clientX-d.ox,vr.left+m,vr.right-m),cy=clamp(e.clientY-d.oy,vr.top+m,vr.bottom-m);g.x=(cx-sr.left)/sr.width;g.y=(cy-sr.top)/sr.height;
+   glPos(h,g);glDraw(glList());glThumb();
+  });
+  const up=()=>{glDrag=null};h.addEventListener('pointerup',up);h.addEventListener('pointercancel',up);
+  L.appendChild(h);
+ });
+}
+let glDrag=null,gSide=0,gHSL=null;
+function glReload(){if(!glList().includes(glSel))glSel=null;glDraw(glList());glMarks();glSync()}
+function glSelect(g){
+ if(g&&tbSel)tbSelect(null);
+ gHSL=null;$('#dglow').classList.remove('cp');glSel=g;[...$('#tbG').children].forEach(h=>h.classList.toggle('sel',h._g===g));glSync();dash();
+}
+function glSync(){
+ const g=glSel;if(!g)return;
+ const set=(n,r,v)=>{const i=$('#'+n);if(document.activeElement!==i)i.value=f1(v);const e=$('#'+r);e.value=v;e.style.setProperty('--p',((e.value-e.min)/(e.max-e.min)*100)+'%')};
+ set('gr','grr',g.r*100);set('ga','gar',g.a*100);
+ const op=$('#dglow').classList.contains('cp');$('#gb0').style.background=g.c0;$('#gb1').style.background=g.c1;$('#gb0').classList.toggle('act',op&&gSide===0);$('#gb1').classList.toggle('act',op&&gSide===1);
+ $('#gprev').style.background='linear-gradient(90deg,'+g.c0+','+g.c1+')';
+}
+function glEdit(fn){const g=glSel;if(!g)return;fn(g);glDraw(glList());glSync();glThumb()}
+function glAdd(){
+ const s=curSlide();if(!s||P.playing)return;s.gl=s.gl||[];if(s.gl.length>=8){toast().textContent='每頁最多 8 個 Glow。';return}
+ const g={x:.5,y:.5,r:.35,a:.8,c0:'#7c8cff',c1:'#22d3ee'};s.gl.push(g);
+ glReload();glSelect(g);glThumb();
+}
+function glDel(){const s=curSlide(),g=glSel;if(!s||!g)return;s.gl=s.gl.filter(x=>x!==g);glSel=null;glReload();dash();glThumb()}
+$('#glb').onclick=()=>{glAdd();$('#fab').classList.remove('open')};
+$('#gdel').onclick=glDel;$('#gclose').onclick=()=>glSelect(null);
+$('#grr').addEventListener('input',e=>glEdit(g=>g.r=clamp(+e.target.value,1,300)/100));
+$('#gr').addEventListener('input',e=>{const v=parseFloat(e.target.value);if(isFinite(v)&&v>0)glEdit(g=>g.r=clamp(v,1,300)/100)});
+$('#gar').addEventListener('input',e=>glEdit(g=>g.a=clamp(+e.target.value,0,100)/100));
+$('#ga').addEventListener('input',e=>{const v=parseFloat(e.target.value);if(isFinite(v))glEdit(g=>g.a=clamp(v,0,100)/100)});
+const hex2hsl=c=>{const[r,g,b]=hx(c);return rgb2hsl(r,g,b)};
+function hsl2hex(h,s,l){s/=100;l/=100;const a=s*Math.min(l,1-l),f=n=>{const k=(n+h/30)%12;return l-a*Math.max(-1,Math.min(k-3,9-k,1))};return toHex([f(0),f(8),f(4)].map(v=>v*255))}
+const gpS=[...document.querySelectorAll('#gpop input')];
+function glPaint(){
+ const[h,s,l]=gHSL,g=(i,v)=>gpS[i].style.setProperty('--g',v);
+ gpS.forEach((x,i)=>x.value=gHSL[i]);
+ g(0,'linear-gradient(90deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)');
+ g(1,'linear-gradient(90deg,hsl('+h+',0%,'+l+'%),hsl('+h+',100%,'+l+'%))');
+ g(2,'linear-gradient(90deg,#000,hsl('+h+','+s+'%,50%),#fff)');
+}
+[0,1].forEach(i=>$('#gb'+i).addEventListener('click',()=>{
+ const g=glSel;if(!g)return;const D=$('#dglow');
+ if(D.classList.contains('cp')&&gSide===i){D.classList.remove('cp');glSync();return}
+ gSide=i;gHSL=hex2hsl(g['c'+i]);D.classList.add('cp');glPaint();glSync();
+}));
+gpS.forEach((x,i)=>x.addEventListener('input',()=>{
+ if(!gHSL)return;gHSL[i]=+x.value;glPaint();
+ glEdit(g=>g['c'+gSide]=hsl2hex(gHSL[0],gHSL[1],gHSL[2]));
+}));
+armSlider($('#grr'),()=>35);armSlider($('#gar'),()=>80);
+new ResizeObserver(()=>{[...$('#tbG').children].forEach(h=>glPos(h,h._g));if(!P.playing)glDraw(glList())}).observe(stg);
+addEventListener('keydown',e=>{
+ if(P.playing||!glSel)return;const a=document.activeElement;if(a&&(/INPUT|TEXTAREA/.test(a.tagName)||a.isContentEditable))return;
+ if(e.key==='Escape')glSelect(null);else if(e.key==='Delete'||e.key==='Backspace')glDel();
+});
+
+// ---------- 投影片：更多選單 / 複製 / 長按拖曳排序 ----------
+let slNC=false;
+function pDup(i){
+ const s=P.slides[i];if(i===P.cur){s.st=snap();if(!s.lock)s.cam=cam0()}
+ const n=mkSlide(s);n.lock=s.lock;P.slides.splice(i+1,0,n);pGo(i+1);
+}
+function pMove(from,to){
+ const cs=curSlide(),[m]=P.slides.splice(from,1);P.slides.splice(to,0,m);P.cur=P.slides.indexOf(cs);pRender();
+}
+const smenu=document.createElement('div');smenu.id='smenu';smenu.className='glass';
+smenu.innerHTML='<button data-a="del" class="danger"><svg viewBox="0 0 24 24" class="ic"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>刪除</button><button data-a="dup"><svg viewBox="0 0 24 24" class="ic"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg>複製頁面</button>';
+document.body.appendChild(smenu);
+let smI=-1;
+function sMenuClose(){smenu.classList.remove('on')}
+function sMenuOpen(i,btn){
+ if(smenu.classList.contains('on')&&smI===i){sMenuClose();return}
+ smI=i;smenu.classList.add('on');
+ const r=btn.getBoundingClientRect(),w=smenu.offsetWidth;
+ smenu.style.left=clamp(r.right-w,8,innerWidth-w-8)+'px';smenu.style.bottom=(innerHeight-r.top+8)+'px';
+}
+smenu.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const i=smI;sMenuClose();if(b.dataset.a==='del')pDel(i);else pDup(i)});
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('#smenu,.sm'))sMenuClose()},true);
+$('#strip').addEventListener('scroll',sMenuClose);
+function slPress(d,i){
+ const strip=$('#strip');let tm=0,sx=0,sy=0,D=null;
+ const nt=e=>{if(D&&e.cancelable)e.preventDefault()};
+ function move(){
+  const dx=D.x-sx+(strip.scrollLeft-D.sc);d.style.transform='translateX('+dx+'px) scale(1.06)';
+  const others=D.cards.filter(c=>c!==d),sr=strip.getBoundingClientRect();let to=0;
+  others.forEach(c=>{const r=c.getBoundingClientRect();if(r.left+r.width/2<D.x)to++});D.to=to;
+  const ref=others[to];let lx=0;
+  if(ref)lx=ref.getBoundingClientRect().left-sr.left+strip.scrollLeft-5;
+  else{const l=others[others.length-1];if(l)lx=l.getBoundingClientRect().right-sr.left+strip.scrollLeft+5}
+  D.ind.style.left=lx+'px';
+ }
+ function loop(){
+  if(!D)return;const sr=strip.getBoundingClientRect();
+  if(D.x<sr.left+36)strip.scrollLeft-=10;else if(D.x>sr.right-36)strip.scrollLeft+=10;
+  move();D.raf=requestAnimationFrame(loop);
+ }
+ function start(pid){
+  try{d.setPointerCapture(pid)}catch(_){}
+  const ind=document.createElement('div');ind.id='sdrop';strip.appendChild(ind);
+  D={x:sx,sc:strip.scrollLeft,cards:[...strip.querySelectorAll('.sd:not(.addc)')],to:i,ind,raf:0};
+  d.classList.add('drag');if(navigator.vibrate)navigator.vibrate(12);
+  document.addEventListener('touchmove',nt,{passive:false});move();loop();
+ }
+ function end(){
+  clearTimeout(tm);if(!D)return;const X=D;D=null;cancelAnimationFrame(X.raf);document.removeEventListener('touchmove',nt);
+  slNC=true;setTimeout(()=>{slNC=false},60);
+  if(X.to!==i)pMove(i,X.to);else{d.classList.remove('drag');d.style.transform='';X.ind.remove()}
+ }
+ d.addEventListener('pointerdown',e=>{
+  if(e.target.closest('.sm')||P.playing||e.button>0)return;
+  sx=e.clientX;sy=e.clientY;clearTimeout(tm);const pid=e.pointerId;tm=setTimeout(()=>start(pid),380);
+ });
+ d.addEventListener('pointermove',e=>{
+  if(D){D.x=e.clientX;move();return}
+  if(Math.hypot(e.clientX-sx,e.clientY-sy)>8)clearTimeout(tm);
+ });
+ d.addEventListener('pointerleave',()=>{if(!D)clearTimeout(tm)});
+ d.addEventListener('pointerup',end);d.addEventListener('pointercancel',end);
+ d.addEventListener('contextmenu',e=>e.preventDefault());
+}
+
+// ---------- dashboard 高度隨內容彈性調整 ----------
+let dhLast=0,fq=0;
+function fitQ(){if(!fq)fq=requestAnimationFrame(()=>{fq=0;fitDash()})}
+function fitDash(){
+ if(!app.classList.contains('open')||P.playing)return;
+ const d=$('#dashin');d.style.height='auto';const h=d.offsetHeight;d.style.height='';dmo.takeRecords();
+ const cap=Math.max(140,app.clientHeight*.55),v=Math.round(clamp(h,96,cap));
+ if(Math.abs(v-dhLast)>1){dhLast=v;app.style.setProperty('--dh',v+'px')}
+}
+const dmo=new MutationObserver(fitQ);dmo.observe($('#dashin'),{subtree:true,childList:true,attributes:true,attributeFilter:['class','style']});
+addEventListener('resize',fitQ);
 
 // ---------- presentation aspect ratio / letterbox ----------
 P.ratio=16/9;
@@ -1378,7 +1617,7 @@ function layoutStage(){
 }
 new ResizeObserver(layoutStage).observe(vp);
 function btnSt(){[['rl','noRays'],['hl','hideLens']].forEach(([id,k])=>{const b=$('#'+id);b.classList.toggle('act',!S[k]);b.classList.toggle('off',!!S[k])})}
-const _dash=dash;dash=function(){_dash();oSync();layoutStage();btnSt();capD();if(Z.s!==1&&!pvLock())resetZ()};
+const _dash=dash;dash=function(){_dash();oSync();layoutStage();btnSt();capD();if(Z.s!==1&&!pvLock())resetZ();fitQ()};
 {const dd=$('#ratb').parentNode;
 $('#ratb').onclick=()=>dd.classList.toggle('open');
 $('#ratl').querySelectorAll('.fi').forEach(b=>b.onclick=()=>{const[x,y]=b.dataset.v.split(':').map(Number);P.ratio=x/y;layoutStage();
@@ -1390,10 +1629,10 @@ document.addEventListener('pointerdown',e=>{if(!e.target.closest('.dd'))dd.class
  Object.keys(D).forEach(id=>{
   const e=$('#'+id);let blk=false,v0=0,lt=0,lx=0,ly=0;e.title='只能拖曳手柄；雙擊還原預設值';
   const off=x=>{const r=e.getBoundingClientRect(),mn=+e.min,mx=+e.max,c=r.left+11+((+e.value-mn)/(mx-mn))*(r.width-22);return Math.abs(x-c)>24};
-  const guard=ev=>{const x=ev.touches?ev.touches[0].clientX:ev.clientX;if(off(x)){ev.preventDefault();blk=true;v0=e.value}};
+  const guard=ev=>{const x=ev.touches?ev.touches[0].clientX:ev.clientX;if(off(x)){if(ev.type==='mousedown')ev.preventDefault();blk=true;v0=e.value}};
   e.addEventListener('pointerdown',ev=>{blk=false;guard(ev)});
   e.addEventListener('mousedown',guard);
-  e.addEventListener('touchstart',guard,{passive:false});
+  e.addEventListener('touchstart',guard,{passive:true});
   e.addEventListener('input',ev=>{if(blk){e.value=v0;ev.stopImmediatePropagation()}},true);
   e.addEventListener('pointercancel',()=>{blk=false});
   e.addEventListener('pointerup',ev=>{
@@ -1410,10 +1649,10 @@ function capD(){S.lenses.forEach((l,i)=>{if(!LD[i])LD[i]={x:l.x,f:l.f,D:l.D,E:l.
 function armSlider(e,defFn){
  let blk=false,v0=0,lt=0,lx=0,ly=0;
  const off=x=>{const r=e.getBoundingClientRect(),mn=+e.min,mx=+e.max,c=r.left+11+((+e.value-mn)/(mx-mn))*(r.width-22);return Math.abs(x-c)>24};
- const guard=ev=>{const x=ev.touches?ev.touches[0].clientX:ev.clientX;if(off(x)){ev.preventDefault();blk=true;v0=e.value}};
+ const guard=ev=>{const x=ev.touches?ev.touches[0].clientX:ev.clientX;if(off(x)){if(ev.type==='mousedown')ev.preventDefault();blk=true;v0=e.value}};
  e.addEventListener('pointerdown',ev=>{blk=false;guard(ev)});
  e.addEventListener('mousedown',guard);
- e.addEventListener('touchstart',guard,{passive:false});
+ e.addEventListener('touchstart',guard,{passive:true});
  e.addEventListener('input',ev=>{if(blk){e.value=v0;ev.stopImmediatePropagation()}},true);
  e.addEventListener('pointercancel',()=>{blk=false});
  e.addEventListener('pointerup',ev=>{
@@ -1449,7 +1688,7 @@ $('#pauto').addEventListener('change',()=>{const s=curSlide();if(s)s.auto=$('#pa
 $('#phold').addEventListener('input',()=>{const s=curSlide();if(s)s.hold=Math.max(.5,parseFloat($('#phold').value)||3)});
 $('#osz').addEventListener('input',e=>{const v=parseFloat(e.target.value);if(isFinite(v)&&v>0){CUBE.s=v;update()}});
 $('#oszr').addEventListener('input',e=>{CUBE.s=parseFloat(e.target.value);update()});armSlider($('#oszr'),()=>110);
-$('#oglow').onclick=()=>{S.glow=!S.glow;update()};
+$('#oglow').onclick=()=>{S.glow=!S.glow;update()};$('#dtclose').onclick=()=>tbSelect(null);
 build();resize();$('#auto').click();T.classList.remove('show');clearTimeout(tm);{const l0=sorted()[0];if(l0)CUBE.x=l0.x-70-(S.otype==='cube'?CUBE.s/2:0)}$('#fit').click();update();
 </script>
 </body>
