@@ -256,6 +256,32 @@ input[type=range]{touch-action:pan-y}
 #dview .cbtn{width:36px;height:36px}
 #dview .cpop{position:static;display:none;width:100%;max-width:460px;margin-top:10px}#dview.cp .cpop{display:flex}
 #dobj .opts{grid-template-columns:repeat(3,1fr)}
+#vbgbar{position:relative;height:34px;margin:4px 12px 2px;touch-action:none;cursor:copy}
+#vbgfill{position:absolute;left:0;right:0;top:7px;height:20px;border-radius:10px;border:1px solid var(--bd);pointer-events:none}
+.vgn{position:absolute;top:17px;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 6px rgba(0,0,0,.5);cursor:grab;touch-action:none}
+.vgn.sel{box-shadow:0 0 0 2px var(--acc),0 1px 6px rgba(0,0,0,.5)}
+.btn:disabled{opacity:.4;pointer-events:none}
+
+/* 電腦版：dashboard 改成左側直式側欄；簡報頁面列表獨立放在下方（兩者可同時存在） */
+#app{--sw:clamp(300px,24vw,380px);--sh:clamp(170px,24vh,240px)}
+#dstrip{display:none}
+#dstripin{height:100%;padding:12px 18px;border-radius:22px 22px 0 0;border-bottom:0;overflow:auto}
+#app.play #dstrip{display:none!important}
+@media (min-width:860px) and (hover:hover) and (pointer:fine){
+ #vp{min-width:0}
+ #app{grid-template-columns:0px minmax(0,1fr);grid-template-rows:minmax(0,1fr) 0px;transition:grid-template-columns .4s cubic-bezier(.2,.8,.2,1),grid-template-rows .4s cubic-bezier(.2,.8,.2,1)}
+ #app.open{grid-template-columns:var(--sw) minmax(0,1fr);grid-template-rows:minmax(0,1fr) 0px}
+ #app.strip{grid-template-columns:0px minmax(0,1fr);grid-template-rows:minmax(0,1fr) var(--sh)}
+ #app.open.strip{grid-template-columns:var(--sw) minmax(0,1fr);grid-template-rows:minmax(0,1fr) var(--sh)}
+ #dash{grid-column:1;grid-row:1/3;min-width:0;overflow:hidden}
+ #vp{grid-column:2;grid-row:1}
+ #dstrip{display:block;grid-column:2;grid-row:2;min-height:0;min-width:0;overflow:hidden}
+ #dashin{width:var(--sw);border-radius:0 20px 20px 0;border-left:0;border-bottom:1px solid var(--bd);padding:16px 18px}
+ #dashin .grid{grid-template-columns:1fr}
+ #dashin .dh{flex-wrap:wrap;row-gap:6px}
+ #dashin .num{width:120px}
+ #dstripin .tm .num{width:96px}
+}
 </style>
 </head>
 <body>
@@ -346,7 +372,8 @@ input[type=range]{touch-action:pan-y}
 <div class="grid">
 <div class="osl"><label><span>邊框粗細</span><span><input class="num" id="vbw" type="number" step="any"> %</span></label><input type="range" id="vbwr" min="0" max="3" step="0.05"></div>
 <div class="osl"><label><span>圓角</span><span><input class="num" id="vbr" type="number" step="any"> %</span></label><input type="range" id="vbrr" min="0" max="25" step="0.1"></div>
-<div class="osl" style="grid-column:1/-1"><label><span>邊框顏色</span></label><div><button class="cbtn" id="vbc" title="邊框顏色"></button></div>
+<div class="osl"><label><span>漸層角度</span><span><input class="num" id="vba" type="number" step="any"> °</span></label><input type="range" id="vbar" min="0" max="360" step="1"></div>
+<div class="osl" style="grid-column:1/-1"><label><span>邊框漸層（點色條新增節點，拖曳節點調整位置）</span><button class="btn" id="vbgdel" style="padding:3px 10px">刪除節點</button></label><div id="vbgbar"><div id="vbgfill"></div></div>
 <div class="cpop glass" id="vbpop"><div class="cr"><span>色相</span><input type="range" min="0" max="360" step="1"></div><div class="cr"><span>飽和</span><input type="range" min="0" max="100" step="1"></div><div class="cr"><span>亮度</span><input type="range" min="0" max="100" step="1"></div></div></div>
 </div></div>
 </div></section>
@@ -355,6 +382,7 @@ input[type=range]{touch-action:pan-y}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
 const $=s=>document.querySelector(s);
+var DESK=matchMedia('(min-width:860px) and (hover:hover) and (pointer:fine)');
 const COL=[0x2563eb,0x16a34a,0x9333ea,0xdb2777,0x0891b2,0xca8a04];
 const S={lenses:[{x:100,f:80,D:40},{x:260,f:60,D:40}],sel:null,panMode:false,screen:380,beam:30,N:2,ang:0,n:1.52,disp:0,exp:1,rot:0,fres:4,hd:'hall',otype:'plate',ssz:36};
 const CUBE={x:-85,s:110};
@@ -958,7 +986,7 @@ function sync(){
 }
 function dash(){
  const isT=!!tbSel&&P.on&&!P.playing,isG=!!glSel&&P.on&&!P.playing&&!isT,isV=!!vbSel&&P.on&&!P.playing&&!isT&&!isG,isObj=S.sel==='cube'&&!isT&&!isG&&!isV,isL=!!curLens()&&!isT&&!isG&&!isV;$('#dview').style.display=isV?'flex':'none';$('#dtext').style.display=isT?'flex':'none';$('#dglow').style.display=isG?'block':'none';$('#dhl').style.display=isL?'':'none';$('#dgl').style.display=isL?'':'none';$('#dobj').style.display=isObj?'flex':'none';document.querySelectorAll('.opts button').forEach(b=>b.classList.toggle('act',b.dataset.o===S.otype));
- const l=curLens(),showSl=P.on&&!l&&!isObj&&!isT&&!isG&&!isV;$('#dslides').style.display=showSl?'flex':'none';app.classList.toggle('open',(isL||isObj||showSl||isT||isG||isV)&&!P.playing);app.classList.toggle('pm',P.on);app.classList.toggle('play',P.playing);
+ const l=curLens(),showSl0=P.on&&!l&&!isObj&&!isT&&!isG&&!isV,desk=DESK.matches,showSl=desk?P.on:showSl0,anyP=isL||isObj||isT||isG||isV;$('#dslides').style.display=showSl?'flex':'none';app.classList.toggle('open',(desk?anyP:(anyP||showSl0))&&!P.playing);app.classList.toggle('strip',desk&&P.on&&!P.playing);app.classList.toggle('pm',P.on);app.classList.toggle('play',P.playing);
  if(l){$('#dtitle').textContent='鏡片 L'+(S.sel+1);const c=hex(COL[S.sel%6]);$('#ddot').style.background=c;$('#ddot').style.color=c}
  sync();
 }
@@ -1841,15 +1869,38 @@ $('#oimgup').onclick=()=>$('#ifile').click();
 document.querySelectorAll('.opts button').forEach(b=>{if(b.dataset.o==='img')b.onclick=()=>{if(IMG){S.otype='img';update()}else $('#ifile').click()}});
 // ---------- 視角方塊 ----------
 var VB={list:[],rt:null,mat:null,sc:null,oc:null,cam:null,tv:null},vbSel=null,vbEdit=false;
-const UVF=['x','y','w','h','bw','rad','c','az','el','d','tx','ty','tz'];
-const UVN={x:'X',y:'Y',w:'寬度',h:'高度',bw:'邊框粗細',rad:'圓角',c:'邊框顏色',az:'視角',el:'視角',d:'視角',tx:'視角',ty:'視角',tz:'視角'};
+const UVF=['x','y','w','h','bw','rad','g','az','el','d','tx','ty','tz'];
+const UVN={x:'X',y:'Y',w:'寬度',h:'高度',bw:'邊框粗細',rad:'圓角',g:'邊框漸層',az:'視角',el:'視角',d:'視角',tx:'視角',ty:'視角',tz:'視角'};
 function vget(o,f){const c=o.cam;switch(f){case'az':return c.az;case'el':return c.el;case'd':return c.d;case'tx':return c.t[0];case'ty':return c.t[1];case'tz':return c.t[2]}return o[f]}
 function vset(o,f,v){const c=o.cam;switch(f){case'az':c.az=v;break;case'el':c.el=v;break;case'd':c.d=v;break;case'tx':c.t[0]=v;break;case'ty':c.t[1]=v;break;case'tz':c.t[2]=v;break;default:o[f]=v}}
 function camLerp(a,b,e){let da=b.az-a.az;da=Math.atan2(Math.sin(da),Math.cos(da));return{az:a.az+da*e,el:a.el+(b.el-a.el)*e,d:a.d*Math.pow(b.d/a.d,e),t:[0,1,2].map(i=>a.t[i]+(b.t[i]-a.t[i])*e)}}
+var vgSel=0,vgDrag=null;
+const VBGC=new Map();
+function vbGparse(str){
+ let g=VBGC.get(str);if(g)return g;
+ const parts=String(str).split(';'),a=parseFloat(parts[0])||0;
+ let st=parts.slice(1).map(x=>{const i=x.indexOf(':');return{p:parseFloat(x.slice(0,i)),c:x.slice(i+1)}}).filter(x=>isFinite(x.p)&&/^#[0-9a-f]{6}$/i.test(x.c)).map(x=>({p:clamp(x.p,0,1),c:x.c.toLowerCase()})).sort((u,v)=>u.p-v.p).slice(0,8);
+ if(st.length<2)st=[{p:0,c:'#ffffff'},{p:1,c:'#ffffff'}];
+ g={a,s:st};if(VBGC.size>300)VBGC.clear();VBGC.set(str,g);return g;
+}
+const vbGstr=g=>(Math.round(g.a*10)/10)+';'+g.s.map(x=>(Math.round(x.p*10000)/10000)+':'+x.c).join(';');
+const vbGof=b=>vbGparse(b.g!=null?b.g:'0;0:'+(b.c||'#ffffff')+';1:'+(b.c||'#ffffff'));
+const vbGcopy=b=>JSON.parse(JSON.stringify(vbGof(b)));
+function vbGat(g,t){
+ const s=g.s;if(t<=s[0].p)return s[0].c;
+ for(let i=1;i<s.length;i++)if(t<=s[i].p){const k=(t-s[i-1].p)/Math.max(1e-5,s[i].p-s[i-1].p);return toHex(mixc(hx(s[i-1].c),hx(s[i].c),k))}
+ return s[s.length-1].c;
+}
+function vbGmix(a,b,e){
+ const A=vbGof(a),B=vbGof(b);let da=B.a-A.a;da=((da+540)%360)-180;
+ let ps=[...new Set([...A.s.map(x=>x.p),...B.s.map(x=>x.p)])].sort((u,v)=>u-v);
+ if(ps.length>8)ps=Array.from({length:8},(_,i)=>i/7);
+ return vbGstr({a:A.a+da*e,s:ps.map(p=>({p,c:toHex(mixc(hx(vbGat(A,p)),hx(vbGat(B,p)),e))}))});
+}
 function vbMix(A,B,e){
  const out=[],n=Math.max(A.length,B.length);
  for(let i=0;i<n;i++){const a=A[i],b=B[i];
-  if(a&&b){const L=k=>a[k]+(b[k]-a[k])*e;out.push({x:L('x'),y:L('y'),w:L('w'),h:L('h'),bw:L('bw'),rad:L('rad'),c:toHex(mixc(hx(a.c),hx(b.c),e)),cam:camLerp(a.cam,b.cam,e)})}
+  if(a&&b){const L=k=>a[k]+(b[k]-a[k])*e;out.push({x:L('x'),y:L('y'),w:L('w'),h:L('h'),bw:L('bw'),rad:L('rad'),g:vbGmix(a,b,e),cam:camLerp(a.cam,b.cam,e)})}
   else if(a)out.push({...a,al:1-e});else out.push({...b,al:e});
  }
  return out;
@@ -1860,12 +1911,22 @@ function vbInit(){
  VB.cam=new THREE.PerspectiveCamera(40,1,.1,5000);VB.tv=new THREE.Vector3();
  VB.oc=new THREE.OrthographicCamera(-1,1,1,-1,0,1);VB.sc=new THREE.Scene();
  VB.mat=new THREE.ShaderMaterial({
-  uniforms:{uT:{value:null},uRect:{value:new THREE.Vector4()},uSz:{value:new THREE.Vector2(1,1)},uRad:{value:0},uBw:{value:0},uAl:{value:1},uBA:{value:1},uDpr:{value:1},uBc:{value:new THREE.Color(1,1,1)},uGl:G.gl,uGa:G.ga,uGb:G.gb,uNg:G.ng},
+  uniforms:{uT:{value:null},uRect:{value:new THREE.Vector4()},uSz:{value:new THREE.Vector2(1,1)},uRad:{value:0},uBw:{value:0},uAl:{value:1},uBA:{value:1},uDpr:{value:1},uBN:{value:2},uBAng:{value:0},uBP:{value:new Array(8).fill(0)},uBCs:{value:Array.from({length:8},()=>new THREE.Vector3())},uGl:G.gl,uGa:G.ga,uGb:G.gb,uNg:G.ng},
   vertexShader:'varying vec2 vUv;uniform vec4 uRect;void main(){vUv=uv;vec2 p=mix(uRect.xy,uRect.zw,uv);gl_Position=vec4(p,0.0,1.0);}',
   fragmentShader:`precision highp float;
-varying vec2 vUv;uniform sampler2D uT;uniform vec2 uSz;uniform float uRad,uBw,uAl,uBA,uDpr,uNg;uniform vec3 uBc;
+varying vec2 vUv;uniform sampler2D uT;uniform vec2 uSz;uniform float uRad,uBw,uAl,uBA,uDpr,uNg;uniform float uBN,uBAng;uniform float uBP[8];uniform vec3 uBCs[8];
 uniform vec4 uGl[8];uniform vec3 uGa[8];uniform vec3 uGb[8];
 float sdRR(vec2 p,vec2 b,float r){vec2 q=abs(p)-b+r;return length(max(q,0.0))+min(max(q.x,q.y),0.0)-r;}
+vec3 gradCol(float t){
+ vec3 c=uBCs[0];
+ if(t<=uBP[0])return c;
+ for(int i=1;i<8;i++){
+  if(float(i)>=uBN)break;
+  if(t<=uBP[i]){float k=(t-uBP[i-1])/max(uBP[i]-uBP[i-1],1e-5);return mix(uBCs[i-1],uBCs[i],k);}
+  c=uBCs[i];
+ }
+ return c;
+}
 void main(){
  vec2 p=(vUv-0.5)*uSz;
  float r=min(uRad,0.5*min(uSz.x,uSz.y));
@@ -1883,7 +1944,7 @@ void main(){
   bg=mix(bg,mix(uGa[i],uGb[i],tt),g.w*k);
  }
  vec3 col=t.rgb+bg*(1.0-t.a);
- if(uBw>0.0){float fill=clamp(0.5-(d+uBw)*uDpr,0.0,1.0);col=mix(uBc,col,fill);}
+ if(uBw>0.0){float fill=clamp(0.5-(d+uBw)*uDpr,0.0,1.0);vec2 dr=vec2(sin(uBAng),-cos(uBAng));float L=abs(uSz.x*dr.x)+abs(uSz.y*dr.y);col=mix(gradCol(dot(vec2(p.x,-p.y),dr)/max(L,1.0)+0.5),col,fill);}
  gl_FragColor=vec4(col,cov*uAl);
 }`,
   transparent:true,depthTest:false,depthWrite:false,side:THREE.DoubleSide});
@@ -1902,9 +1963,9 @@ function vbRender(){
  const L=VB.list;if(!L||!L.length)return;
  const W=stg.clientWidth,H=stg.clientHeight;if(!W||!H)return;
  vbInit();
- const dpr=R.getPixelRatio(),gv=gizmo.visible,dv=dimL.visible,ac=R.autoClear,pj0=G.pj.value.clone(),asp0=G.asp.value;
+ const dpr=R.getPixelRatio(),gv=gizmo.visible,dv=dimL.visible,ac=R.autoClear,pj0=G.pj.value.clone(),asp0=G.asp.value,ng0=G.ng.value;
  const us=meshes.map(m=>m.material.uniforms.uSel.value);meshes.forEach(m=>m.material.uniforms.uSel.value=0);
- gizmo.visible=false;dimL.visible=false;
+ gizmo.visible=false;dimL.visible=false;G.ng.value=0;
  L.forEach(b=>{
   const bw=Math.max(8,b.w*W),bh=Math.max(8,b.h*W),pw=Math.min(2048,Math.max(2,Math.round(bw*dpr))),ph=Math.min(2048,Math.max(2,Math.round(bh*dpr)));
   const c=VB.cam,cm=b.cam;c.aspect=bw/bh;c.updateProjectionMatrix();
@@ -1917,12 +1978,12 @@ function vbRender(){
   u.uT.value=rt.texture;
   u.uRect.value.set(2*x0/W-1,1-2*(y0+bh)/H,2*(x0+bw)/W-1,1-2*y0/H);
   u.uSz.value.set(bw,bh);u.uRad.value=Math.max(0,b.rad*W);u.uBw.value=Math.max(0,b.bw*W);
-  u.uAl.value=b.al==null?1:b.al;u.uBA.value=bh/bw;u.uDpr.value=dpr;u.uBc.value.set(b.c||'#ffffff');
+  u.uAl.value=b.al==null?1:b.al;u.uBA.value=bh/bw;u.uDpr.value=dpr;{const gg=vbGof(b);u.uBN.value=gg.s.length;gg.s.forEach((x,i)=>{u.uBP.value[i]=x.p;u.uBCs.value[i].set(...hx(x.c).map(v=>v/255))});u.uBAng.value=gg.a*Math.PI/180}
   R.autoClear=false;R.render(VB.sc,VB.oc);
  });
  R.autoClear=ac;gizmo.visible=gv;dimL.visible=dv;
  meshes.forEach((m,i)=>m.material.uniforms.uSel.value=us[i]);
- G.pj.value.copy(pj0);G.asp.value=asp0;
+ G.pj.value.copy(pj0);G.asp.value=asp0;G.ng.value=ng0;
 }
 // --- 編輯用覆蓋層 ---
 const vbL=document.createElement('div');vbL.id='tbV';TBL.insertBefore(vbL,TBL.firstChild);
@@ -1955,7 +2016,7 @@ function vbReload(){
 }
 function vbSelect(b){
  if(b&&tbSel)tbSelect(null);if(b&&glSel)glSelect(null);
- vbSel=b;if(!b)vbEdit=false;
+ if(b!==vbSel)vgSel=0;vbSel=b;if(!b)vbEdit=false;
  $('#dview').classList.remove('cp');
  [...vbL.children].forEach(c=>{c.classList.toggle('sel',c._b===b);c.classList.toggle('ev',c._b===b&&vbEdit)});
  vbSync();dash();
@@ -1963,8 +2024,8 @@ function vbSelect(b){
 function vbSync(){
  const b=vbSel;if(!b)return;
  const set=(n,r,v)=>{const i=$('#'+n);if(document.activeElement!==i)i.value=f1(v);const e=$('#'+r);e.value=v;e.style.setProperty('--p',((e.value-e.min)/(e.max-e.min)*100)+'%')};
- set('vbw','vbwr',b.bw*100);set('vbr','vbrr',b.rad*100);
- $('#vbc').style.background=b.c;
+ set('vbw','vbwr',b.bw*100);set('vbr','vbrr',b.rad*100);set('vba','vbar',vbGof(b).a);
+ vbGui();
  $('#vbedit').classList.toggle('act',vbEdit);$('#vbedit').textContent=vbEdit?'完成視角':'調整視角';
  $('#vbhint').style.display=vbEdit?'':'none';
 }
@@ -2018,7 +2079,7 @@ function vbUp(e){
 function vbAdd(){
  const s=curSlide();if(!s||P.playing)return;s.vb=s.vb||[];
  if(s.vb.length>=4){toast().textContent='每頁最多 4 個視角方塊。';return}
- const b={x:.62,y:.06,w:.34,h:.22,bw:.004,rad:.02,c:'#ffffff',cam:{az:0,el:1.2,d:V.d,t:[V.t.x,V.t.y,V.t.z]}};
+ const b={x:.62,y:.06,w:.34,h:.22,bw:.004,rad:.02,g:'45;0:#7c8cff;1:#22d3ee',cam:{az:0,el:1.2,d:V.d,t:[V.t.x,V.t.y,V.t.z]}};
  s.vb.push(b);vbReload();vbSelect(b);glThumb();
 }
 function vbDel(){
@@ -2042,14 +2103,53 @@ function vbPaint(){
  g(1,'linear-gradient(90deg,hsl('+h+',0%,'+l+'%),hsl('+h+',100%,'+l+'%))');
  g(2,'linear-gradient(90deg,#000,hsl('+h+','+s2+'%,50%),#fff)');
 }
-$('#vbc').onclick=()=>{
- const b=vbSel;if(!b)return;const D=$('#dview');
- if(D.classList.contains('cp')){D.classList.remove('cp');return}
- vbHSL=hex2hsl(b.c);D.classList.add('cp');vbPaint();
+function vbGcommit(g){vbChange(b=>b.g=vbGstr(g))}
+function vbGpick(){
+ const b=vbSel;if(!b)return;const g=vbGof(b);
+ vbHSL=hex2hsl(g.s[Math.min(vgSel,g.s.length-1)].c);$('#dview').classList.add('cp');vbPaint();vbGui();
+}
+function vbGui(){
+ const b=vbSel;if(!b)return;const g=vbGof(b);
+ if(vgSel>=g.s.length)vgSel=g.s.length-1;
+ const bar=$('#vbgbar');
+ $('#vbgfill').style.background='linear-gradient(90deg,'+g.s.map(x=>x.c+' '+x.p*100+'%').join(',')+')';
+ let nodes=[...bar.querySelectorAll('.vgn')];
+ if(nodes.length!==g.s.length){nodes.forEach(n=>n.remove());nodes=g.s.map((_,i)=>vbGnode(i));nodes.forEach(n=>bar.appendChild(n))}
+ nodes.forEach((n,i)=>{n.style.left=g.s[i].p*100+'%';n.style.background=g.s[i].c;n.classList.toggle('sel',i===vgSel)});
+ $('#vbgdel').disabled=g.s.length<=2;
+}
+function vbGnode(i){
+ const n=document.createElement('div');n.className='vgn';
+ n.addEventListener('pointerdown',e=>{
+  e.preventDefault();e.stopPropagation();const b=vbSel;if(!b)return;
+  try{n.setPointerCapture(e.pointerId)}catch(_){}
+  vgSel=i;vgDrag={i,g:vbGcopy(b),id:e.pointerId};vbGpick();
+ });
+ n.addEventListener('pointermove',e=>{
+  const d=vgDrag;if(!d||d.id!==e.pointerId||d.i!==i)return;
+  const r=$('#vbgbar').getBoundingClientRect(),lo=i>0?d.g.s[i-1].p:0,hi=i<d.g.s.length-1?d.g.s[i+1].p:1;
+  d.g.s[i].p=clamp((e.clientX-r.left)/r.width,lo,hi);vbGcommit(d.g);
+ });
+ const up=()=>{vgDrag=null};n.addEventListener('pointerup',up);n.addEventListener('pointercancel',up);
+ return n;
+}
+$('#vbgbar').addEventListener('pointerdown',e=>{
+ if(e.target.closest('.vgn')||!vbSel)return;
+ const g=vbGcopy(vbSel);if(g.s.length>=8){toast().textContent='最多 8 個節點。';return}
+ const r=$('#vbgbar').getBoundingClientRect(),t=clamp((e.clientX-r.left)/r.width,0,1),ns={p:t,c:vbGat(g,t)};
+ g.s.push(ns);g.s.sort((a,b)=>a.p-b.p);vgSel=g.s.indexOf(ns);vbGcommit(g);vbGpick();
+});
+$('#vbgdel').onclick=()=>{
+ const b=vbSel;if(!b)return;const g=vbGcopy(b);if(g.s.length<=2)return;
+ g.s.splice(vgSel,1);vgSel=Math.min(vgSel,g.s.length-1);vbGcommit(g);vbGpick();
 };
-vbS.forEach((x,i)=>x.addEventListener('input',()=>{
- if(!vbHSL||!vbSel)return;vbHSL[i]=+x.value;vbPaint();
- vbChange(b=>b.c=hsl2hex(vbHSL[0],vbHSL[1],vbHSL[2]));
+function vbGang(a){const b=vbSel;if(!b)return;const g=vbGcopy(b);g.a=a;vbGcommit(g)}
+$('#vbar').addEventListener('input',e=>vbGang(+e.target.value));
+$('#vba').addEventListener('input',e=>{const v=parseFloat(e.target.value);if(isFinite(v))vbGang(((v%360)+360)%360)});
+armSlider($('#vbar'),()=>45);
+vbS.forEach((x,k)=>x.addEventListener('input',()=>{
+ if(!vbHSL||!vbSel)return;vbHSL[k]=+x.value;vbPaint();
+ const g=vbGcopy(vbSel);g.s[Math.min(vgSel,g.s.length-1)].c=hsl2hex(vbHSL[0],vbHSL[1],vbHSL[2]);vbGcommit(g);
 }));
 dom.addEventListener('pointerdown',()=>{if(!P.playing&&vbSel)vbSelect(null)});
 new ResizeObserver(()=>{[...vbL.children].forEach(el=>vbApplyEl(el,el._b))}).observe(stg);
@@ -2188,6 +2288,11 @@ addEventListener('keydown',e=>{
 });
 // ---------- 左上角資訊開關 ----------
 $('#hudon').onchange=()=>{$('#hud').style.display=$('#hudon').checked?'':'none'};
+// ---------- 電腦版：簡報頁面列表獨立成下方欄位 ----------
+const dstrip=document.createElement('section');dstrip.id='dstrip';dstrip.innerHTML='<div id="dstripin" class="glass"></div>';app.appendChild(dstrip);
+function placeStrip(){const t=DESK.matches?$('#dstripin'):$('#dashin'),e=$('#dslides');if(e.parentNode!==t)t.appendChild(e)}
+placeStrip();
+(DESK.addEventListener?DESK.addEventListener('change',()=>{placeStrip();dash()}):DESK.addListener(()=>{placeStrip();dash()}));
 build();resize();$('#auto').click();T.classList.remove('show');clearTimeout(tm);{const l0=sorted()[0];if(l0)CUBE.x=l0.x-70-(S.otype==='cube'?CUBE.s/2:0)}$('#fit').click();update();
 </script>
 </body>
